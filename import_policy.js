@@ -5,8 +5,8 @@ function ImportPolicy() {}
 
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
 ImportPolicy.prototype.isPublic = true;
-
-/**
+// c1
+/*
  * handle onGet HTTP request
  */
 ImportPolicy.prototype.onGet = function(restOperation) {
