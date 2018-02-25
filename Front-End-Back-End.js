@@ -18,7 +18,7 @@ HelloWorld.prototype.onStart = function(success, error) {
     "method": "GET",
     "hostname": "raw.githubusercontent.com",
     "port": null,
-    "path": "/n8labs/super-netops/master/worker_state.json",
+    "path": "",
     "headers": {
       "cache-control": "no-cache"
     }
