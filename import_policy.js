@@ -6,7 +6,7 @@ ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
 ImportPolicy.prototype.isPublic = true;
 
 ImportPolicy.prototype.onStart = function (success) {
-    logger.info(WorkerName + " - onStart()");
+    logger.info("Import Policy + " - onStart();");
     success();
 };
 
