@@ -5,7 +5,7 @@ function ImportPolicy() {}
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
 ImportPolicy.prototype.isPublic = true;
 
-ipam_extension.prototype.onStart = function (success) {
+ImportPolicy.prototype.onStart = function (success) {
     logger.info(WorkerName + " - onStart()");
     success();
 };
