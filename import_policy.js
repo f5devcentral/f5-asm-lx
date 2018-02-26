@@ -1,12 +1,12 @@
 logger = require('f5-logger').getInstance();
-
+var WorkerName = "Import Policy";
 function ImportPolicy() {}
 
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
 ImportPolicy.prototype.isPublic = true;
 
 ImportPolicy.prototype.onStart = function (success) {
-    logger.info("Import Policy + " - onStart();");
+    logger.info(WorkerName + " - onStart();");
     success();
 };
 
