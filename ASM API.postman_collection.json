@@ -1,0 +1,139 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ASM API",
+		"_postman_id": "c9ddc2d2-59ce-79f3-4450-00ebc7b2c038",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Policy Name - PolicyAPIProfile",
+			"request": {
+				"url": "https://{{DUT_MANAGEMENT_IP}}/mgmt/tm/asm/policies",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"name\" : \"PolicyAPIProfile\"\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Validate PolicyAPIProfile Created",
+			"request": {
+				"url": "https://{{DUT_MANAGEMENT_IP}}/mgmt/tm/asm/policies/aVjGscalmAcCry4io9o3_A/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Upload-Policy_Example To The BIGIP",
+			"request": {
+				"url": "https://{{DUT_MANAGEMENT_IP}}/mgmt/tm/asm/file-transfer/uploads/Policy_Example",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Range",
+						"value": "0-1215255/1215255",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": ""
+					}
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Import ASM Policy_For_PolicyAPIProfile",
+			"request": {
+				"url": "https://{{DUT_MANAGEMENT_IP}}/mgmt/tm/asm/tasks/import-policy",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filename\": \"Common_Policy_Example.xml\",\r\n     \"isBase64\": \"false\",\r\n    \"policyReference\": { \"link\": \"https://localhost/mgmt/tm/asm/policies/aVjGscalmAcCry4io9o3_A\"\r\n    }\r\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Validate Import ASM Policy by ID",
+			"request": {
+				"url": "https://{{DUT_MANAGEMENT_IP}}/mgmt/tm/asm/tasks/import-policy/Wei5paH34HEohEGx90WpnQ",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "LIST ASM POLICIES",
+			"request": {
+				"url": "https://{{DUT_MANAGEMENT_IP}}/mgmt/tm/asm/policies",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46YWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
