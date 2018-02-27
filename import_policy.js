@@ -1,4 +1,5 @@
 logger = require('f5-logger').getInstance();
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var http = require("https");
 var WorkerName = "Import Policy";
 
