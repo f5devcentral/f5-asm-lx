@@ -22,12 +22,8 @@ ImportPolicy.prototype.onStart = function(success, error) {
 ImportPolicy.prototype.onPost = function(restOperation) {
     this.logger.info("Request to Create new Policy Started");
 
-    var body = restOperation.getBody().name;
-    this.logger.info("Body is: " + body);
-
-    /*var newData = restOperation.getBody().Data;
-    this.state.Data = newData;
-    this.logger.info("SomeData is:"+newData);
+    var PolicyName = restOperation.getBody().name;
+    this.logger.info("New Policy Name is: " + PolicyName);
 
     var options = {
         "method": "POST",
@@ -55,10 +51,10 @@ ImportPolicy.prototype.onPost = function(restOperation) {
         });
     });
 
-    req.write(JSON.stringify({ name: 'PolicyLXProfile' }));
+    req.write(JSON.stringify({ name: PolicyName }));
     req.end();
 
-    this.completeRestOperation(restOperation);*/
+    this.completeRestOperation(restOperation);
 };
 
 
