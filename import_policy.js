@@ -32,7 +32,7 @@ ImportPolicy.prototype.onPost = function(restOperation) {
     this.logger.info("SomeData is:"+newData);*/
     this.completeRestOperation(restOperation);
 
-    /*var options = {
+    var options = {
         "method": "POST",
         "hostname": "10.241.188.23",
         "port": null,
@@ -59,7 +59,7 @@ ImportPolicy.prototype.onPost = function(restOperation) {
     });
 
     req.write(JSON.stringify({ name: 'PolicyLXProfile' }));
-    req.end();*/
+    req.end();
 };
 
 /**
