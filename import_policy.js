@@ -5,7 +5,6 @@ var WorkerName = "Import Policy";
 function ImportPolicy() {}
 
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
-
 ImportPolicy.prototype.isPublic = true;
 
 ImportPolicy.prototype.onStart = function(success, error) {
@@ -20,12 +19,11 @@ ImportPolicy.prototype.onStart = function(success, error) {
     }
 };
 
-
 ImportPolicy.prototype.onPost = function(restOperation) {
     this.logger.info("Request to Create new Policy Started");
 
-    var auth = restOperation.getBasicAuthorization();
-    this .logger.info("Basic Auth is: " + auth);
+    var body = restOperation.getBody();
+    this.logger.info("Body is: " + body);
 
  /* var newData = restOperation.getBody().Data;
     this.state.Data = newData;
