@@ -19,13 +19,13 @@ ImportPolicy.prototype.onStart = function(success, error) {
     }
 };
 
-/*ImportPolicy.prototype.onPost = function(restOperation) {
+ImportPolicy.prototype.onPost = function(restOperation) {
     this.logger.info("Request to Create new Policy Started");
 
     var body = restOperation.getBody();
     this.logger.info("Body is: " + body);
 
-    var newData = restOperation.getBody().Data;
+    /*var newData = restOperation.getBody().Data;
     this.state.Data = newData;
     this.logger.info("SomeData is:"+newData);
 
