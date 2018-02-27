@@ -5,15 +5,22 @@ function ImportPolicy() {}
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
 ImportPolicy.prototype.isPublic = true;
 
-ImportPolicy.prototype.onStart = function (success) {
-    logger.info(WorkerName + " - onStart();");
-    success();
+ImportPolicy.prototype.onStart = function(success, error) {
+
+    var err = false;
+    if (err) {
+        this.logger.severe("ImportPolicy onStart error: something went wrong");
+        error();
+    } else {
+        this.logger.info("ImportPolicy onStart success");
+        success();
+    }
 };
 
 
-ImportPolicy.prototype.onGet = function(restOperation) {
-    restOperation.setBody(JSON.stringify( { value: "Hello World!" } ));
-    this.completeRestOperation(restOperation);
+ImportPolicy.prototype.onPost = function(restOperation) {
+    var newData = restOperation.getBody().SomeData;
+    this.logger.info("SomeData is:"+newData);
 };
 
 /**
