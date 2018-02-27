@@ -1,5 +1,7 @@
 logger = require('f5-logger').getInstance();
+var http = require("https");
 var WorkerName = "Import Policy";
+
 function ImportPolicy() {}
 
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
@@ -19,10 +21,10 @@ ImportPolicy.prototype.onStart = function(success, error) {
 
 
 ImportPolicy.prototype.onPost = function(restOperation) {
-    var newData = restOperation.getBody().SomeData;
+    var newData = restOperation.getBody().Data;
+    this.state.Data = newData;
     this.logger.info("SomeData is:"+newData);
-
-    var http = require("https");
+    this.completeRestOperation(restOperation);
 
     var options = {
         "method": "POST",
