@@ -40,6 +40,8 @@ ImportPolicy.prototype.onPost = function(restOperation) {
     };
 
     var req = http.request(options, function (res) {
+
+
         var chunks = [];
 
         res.on("data", function (chunk) {
@@ -47,8 +49,8 @@ ImportPolicy.prototype.onPost = function(restOperation) {
         });
 
         res.on("end", function () {
-            var body = Buffer.concat(chunks);
-            console.log(body.toString());
+            var body = JSON.parse(Buffer.concat(chunks));
+            logger.info("New Policy ID is: " + body.id);
         });
     });
 
