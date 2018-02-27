@@ -58,14 +58,5 @@ ImportPolicy.prototype.onPost = function(restOperation) {
     this.completeRestOperation(restOperation);
 };
 
-
-//* handle /example HTTP request
-
-ImportPolicy.prototype.getExampleState = function () {
-    return {
-        "value": "your_string"
-    };
-};
-
 module.exports = ImportPolicy;
 
