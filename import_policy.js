@@ -30,7 +30,6 @@ ImportPolicy.prototype.onPost = function(restOperation) {
  /* var newData = restOperation.getBody().Data;
     this.state.Data = newData;
     this.logger.info("SomeData is:"+newData);*/
-    this.completeRestOperation(restOperation);
 
     var options = {
         "method": "POST",
@@ -60,6 +59,8 @@ ImportPolicy.prototype.onPost = function(restOperation) {
 
     req.write(JSON.stringify({ name: 'PolicyLXProfile' }));
     req.end();
+
+    this.completeRestOperation(restOperation);
 };
 
 /**
