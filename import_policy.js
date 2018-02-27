@@ -58,12 +58,12 @@ ImportPolicy.prototype.onPost = function(restOperation) {
     req.write(JSON.stringify({ name: 'PolicyLXProfile' }));
     req.end();
 
-    this.completeRestOperation(restOperation);
+    this.completeRestOperation(restOperation);*/
 };
 
-/**
- * handle /example HTTP request
- */
+
+//* handle /example HTTP request
+
 ImportPolicy.prototype.getExampleState = function () {
     return {
         "value": "your_string"
