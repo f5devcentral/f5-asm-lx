@@ -24,9 +24,12 @@ ImportPolicy.prototype.onStart = function(success, error) {
 ImportPolicy.prototype.onPost = function(restOperation) {
     this.logger.info("Request to Create new Policy Started");
 
-    var newData = restOperation.getBody().Data;
+    var auth = restOperation.getBasicAuthorization();
+    this .logger.info("Basic Auth is: " + auth);
+
+ /* var newData = restOperation.getBody().Data;
     this.state.Data = newData;
-    this.logger.info("SomeData is:"+newData);
+    this.logger.info("SomeData is:"+newData);*/
     this.completeRestOperation(restOperation);
 
     /*var options = {
