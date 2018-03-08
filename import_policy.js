@@ -1,8 +1,3 @@
-logger = require('f5-logger').getInstance();
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-var http = require("https");
-var WorkerName = "Import Policy";
-
 function ImportPolicy() {}
 
 ImportPolicy.prototype.WORKER_URI_PATH = "asm/import_policy";
@@ -61,4 +56,3 @@ ImportPolicy.prototype.onPost = function(restOperation) {
 };
 
 module.exports = ImportPolicy;
-

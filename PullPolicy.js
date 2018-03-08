@@ -1,3 +1,4 @@
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var logger = require('f5-logger').getInstance();
 var request = require("/var/config/rest/iapps/PullPolicy/nodejs/node_modules/request");
 var async = require("/var/config/rest/iapps/PullPolicy/nodejs/node_modules/async");
