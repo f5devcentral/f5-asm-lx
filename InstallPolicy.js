@@ -1,42 +1,43 @@
-var logger = require('f5-logger').getInstance();
+const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/request");
 const util = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/util");
-const hostname = "10.241.188.23";
+const Dhostname = "10.241.188.23";
 const PolicyUploadName = "Policy_Example";
-const url = "https://raw.githubusercontent.com/nashkenazi/LX-ASM/master/Policy_Example.xml";
-var policyID = "A_Q712olFUfWmpIrm8L21A";
-var filename = "Policy_Example";
-var ImportPolicyURL = "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy";
-var TransferPolicyURL = "https://" + hostname + "/mgmt/tm/asm/file-transfer/uploads/" + PolicyUploadName;
-var getName;
-var dataPolicy;
+const policyID = "A_Q712olFUfWmpIrm8L21A";
+const filename = "Policy_Example";
+const ImportPolicyURL = "https://" + Dhostname + "/mgmt/tm/asm/tasks/import-policy";
+const TransferPolicyURL = "https://" + Dhostname + "/mgmt/tm/asm/file-transfer/uploads/" + PolicyUploadName;
 
+InstallPolicy.prototype.onStart = function(success, error) {
+    var err = false;
+    if (err) {
+        logger.severe("Install Policy onStart error: something went wrong");
+        error();
+    } else {
+        logger.info("Install Policy onStart success");
+        success();
+    }
+};
 
 function InstallPolicy() {}
 
 InstallPolicy.prototype.WORKER_URI_PATH = "asm/install_policy";
 InstallPolicy.prototype.isPublic = true;
 
-/*
-InstallPolicy.prototype.onStart = function(success, err) {
-
-    this.logger.info("Install Policy LX is onStart");
-
-    if (err) {
-        this.logger.severe("Install Policy onStart error: something went wrong" + err);
-        err();
-    } else {
-        this.logger.info("Install Policy onStart success");
-        success();
-    }
-};
-*/
-
 InstallPolicy.prototype.onPost = function (restOperation) {
-  logger.info("onPost Event: Policy URL to pull from GIT is: " + getName);
-  var getName = restOperation.getBody().policyname;
 
-  request(getName, function(err, response, body) {
+  var policySCName = restOperation.getBody().policyname;
+  var hostName = restOperation.getUri().host;
+
+  //for (var property in hostName) {
+    //logger.info(property + "=" + hostName[property])
+//  }
+
+
+  logger.info(`onPost Event: Policy URL to pull from GIT: ${policySCName}`);
+  logger.info(`onPost Event: hostname is: ${hostName}`);
+
+  request(policySCName, function(err, response, body) {
 
       if (err) {
           logger.severe("Something went wrong with GIT Pull: " + err);
@@ -86,32 +87,34 @@ InstallPolicy.prototype.onPost = function (restOperation) {
                               }
                           };
 
-                          request(ImportPolicyOptions, function (err, response, body) {
+                        request(ImportPolicyOptions, function (err, response, body) {
                               logger.info("Import Policy Event");
+                              var URL = request.url;
+
                               if (err) {
                                   logger.severe("Something went wrong with Import Policy: " + err);
 
-                              } else if (response.statusCode !== 200) {
-                                  logger.severe("Import Policy File: NOT Received Status 200OK from F5 device" + util.inspect(body));
+                              } else if (response.statusCode !== 201) {
+                                  logger.severe("Import Policy File: NOT Received Status 201 OK from F5 device" + util.inspect(body));
 
                               } else {
-
-                                  logger.info("Import Policy body: " + util.inspect(body));
-                                  restOperation.setBody(body);
-                                  this.completeRestOperation(restOperation);
-                              }
-
-                          });
+                                  logger.info("Import Policy: Import body recieved: \n" + body);
+                                }
+                        });
                   }
               });
-      }
-  });
+        }
+    });
+    restOperation.setBody(this.state);
+    this.completeRestOperation(restOperation);
 };
 
+/*
 InstallPolicy.prototype.getExampleState = function () {
   return {
     "value": "your_string"
   };
 };
+*/
 
 module.exports = InstallPolicy;
