@@ -16,7 +16,7 @@ Policy Name was set to /Common/Default_Rapid_Policy.
 Enforcement Mode was set to Transparent. { audit: policy = /Common/Default_Rapid_Policy, username = admin, client IP = 192.168.188.53 }</last_change>
   </policy_version>
   <encoding>utf-8</encoding>
-  <description>Rapid Deployment Policy</description>
+  <description>Declarative API: GitHub Deployment Policy</description>
   <case_insensitive>false</case_insensitive>
   <owa>false</owa>
   <protocol_free>false</protocol_free>
