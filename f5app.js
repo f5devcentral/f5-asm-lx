@@ -1,15 +1,7 @@
 const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/request");
 const async = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/async");
-const hostname = "10.241.188.23";
 const authorization = "Basic YWRtaW46YWRtaW4=";
-const url = "https://raw.githubusercontent.com/nashkenazi/LX-ASM/master/Policy_Example.xml";
-//const PolicyUploadName = "Policy_Example";
-//const TransferPolicyURL = "https://" + hostname + "/mgmt/tm/asm/file-transfer/uploads/" + PolicyUploadName;
-const Pname = "DeclartiveAPIPolicy";
-const createDeviceURL = "https://" + hostname + "/mgmt/tm/asm/policies";
-const createData = {name: Pname};
-const ImportPolicyURL = "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy";
 const timeOut = 35000;
 
 InstallPolicy.prototype.onStart = function(success, error) {
@@ -32,11 +24,8 @@ InstallPolicy.prototype.onPost = function (restOperation) {
   athis = this;
   var policySCName = restOperation.getBody().policygitname;
   var policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
-  var uriValue = restOperation.getUri();
 
-  logger.info("policy name is: " + policyFName);
-  logger.info("URIrequest value is: " + JSON.stringify(uriValue));
-  logger.info(`onPost Event: Policy URL to pull from GIT: ${policySCName}`);
+  logger.info(`onPost Event: Policy Name ${policyFName} to pull URL from GIT: ${policySCName}`);
 
   async.waterfall([
       requestFromGit,
@@ -69,11 +58,9 @@ InstallPolicy.prototype.onPost = function (restOperation) {
       });
   }
 
-  function transferPolicy(dataPolicy, contentLength, callback) {
+  function transferPolicy(dataPolicy, contentLength, transferResult) {
     logger.info("Starting to Transfer Policy to the BIG-IP");
-    //const PolicyUploadName = "Policy_Example";
-    //const hostname = "10.241.188.23";
-    //const TransferPolicyURL = "https://" + hostname + "/mgmt/tm/asm/file-transfer/uploads/" + PolicyUploadName;
+
     const TransferPolicyURL = "https://localhost/mgmt/tm/asm/file-transfer/uploads/" + policyFName;
     const newContentRange = "0-" + (Number(contentLength) + 1) + "/" + (Number(contentLength) + 1);
 
@@ -95,24 +82,18 @@ InstallPolicy.prototype.onPost = function (restOperation) {
             logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}: \n` + JSON.stringify(body));
         } else {
                 logger.info(`Transfer Policy File: Received Status code: ${response.statusCode} from BIG-IP`);
-                callback(null, response.statusMessage);
+                transferResult(null, response.statusMessage);
         }
     });
   }
 
-  function createPolicy (policyID) {
-    logger.info("Starting to Create a New Policy");
-    //const Pname = "DeclartiveAPIPolicy";
-    const createDeviceURL = "https://10.241.188.23/mgmt/tm/asm/policies";
-    //const createData = {name: Pname};
+  function createPolicy (transferResult,policyID) {
+    logger.info(`Starting to Create a New ${policyFName} Policy`);
 
     const CreatePolicyOptions = {
-        url: createDeviceURL,
+        url: "https://localhost/mgmt/tm/asm/policies",
         method: "POST",
-        headers: {
-            "Content-type": "application/json",
-            "authorization": authorization,
-           },
+        headers: { "Content-type": "application/json","authorization": authorization },
         json: {"name": policyFName}
     };
 
@@ -121,10 +102,10 @@ InstallPolicy.prototype.onPost = function (restOperation) {
         if (err) {
             logger.severe("Something went wrong with Policy Creation Pull: " + err);
         } else if (response.statusCode !== 201) {
-            logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP: \n` + body.message);
+            logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP: \n ${body.message}`);
             policyID(null,body.id);
         } else {
-                logger.info(`Create Policy: Received Status code: ${response.statusCode} from BIG-IP`);
+                logger.info(`Create Policy: Received Status code: ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`);
                 policyID(null, body.id);
         }
     });
@@ -132,25 +113,19 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
   function importPolicy (policyID,importIDResponse) {
     logger.info(`Starting to Import Policy to the BIG-IP`);
+    var policyRef = "https://localhost/mgmt/tm/asm/policies/" + policyID
 
     if (!policyID)  {
       importIDResponse(null,'Policy already created');
     } else {
 
-            //const hostname = "10.241.188.23";
-            //const ImportPolicyURL = "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy";
-            //const filename = "Policy_Example";
-
             var ImportPolicyOptions = {
-                url: ImportPolicyURL,
+                url: "https://localhost/mgmt/tm/asm/tasks/import-policy",
                 method: "POST",
-                headers: {
-                    "authorization": authorization,
-                    "content-type": "application/json",
-                },
+                headers: { "content-type": "application/json","authorization": authorization },
                 json: {
                     "filename": policyFName,
-                    "policyReference": { "link": "https://localhost/mgmt/tm/asm/policies/" + policyID }
+                    "policyReference": { "link": policyRef }
                 }
             };
 
@@ -160,25 +135,22 @@ InstallPolicy.prototype.onPost = function (restOperation) {
                 } else if (response.statusCode !== 201) {
                     logger.severe(`Import Policy File Error: Received Status code: ${response.statusCode} from BIGIP device \n` + JSON.stringify(body));
                 } else {
-
                     logger.info(`Import Policy File: Received Status code: ${response.statusCode} from BIGIP device`);
                     importIDResponse(null, JSON.stringify(body.id));
                 }
             });
-    }
+          }
   }
 
   function validatePolicyImport (importIDResponse,validateImport) {
     logger.info(`Starting to Validate Policy Import on BIG-IP`);
     const importID = importIDResponse.replace(/^"+|"+$/g, '');
-    const ValidatePolicyURL = "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy/" + importID;
+    const ValidatePolicyURL = "https://localhost/mgmt/tm/asm/tasks/import-policy/" + importID;
 
     var ValidatePolicyOptions = {
         url: ValidatePolicyURL,
         method: "GET",
-        headers: {
-            "authorization": authorization
-        }
+        headers: { "authorization": authorization }
     };
 
     setTimeout(function() {
@@ -203,12 +175,11 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
 };
 
-/*
+
 InstallPolicy.prototype.getExampleState = function () {
   return {
     "value": "your_string"
   };
 };
-*/
 
 module.exports = InstallPolicy;
