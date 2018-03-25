@@ -1,5 +1,4 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-const async = require("async");
 const request = require("request");
 const util = require("util");
 const hostname = "10.241.188.23";

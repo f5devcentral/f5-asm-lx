@@ -1,12 +1,18 @@
 const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/request");
-const util = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/util");
-const Dhostname = "10.241.188.23";
+const request = require("request");
+const async = require("async");
+
+const hostname = "10.241.188.23";
+const authorization = "Basic YWRtaW46YWRtaW4=";
+const url = "https://raw.githubusercontent.com/nashkenazi/LX-ASM/master/Policy_Example.xml";
 const PolicyUploadName = "Policy_Example";
-const policyID = "A_Q712olFUfWmpIrm8L21A";
-const filename = "Policy_Example";
-const ImportPolicyURL = "https://" + Dhostname + "/mgmt/tm/asm/tasks/import-policy";
-const TransferPolicyURL = "https://" + Dhostname + "/mgmt/tm/asm/file-transfer/uploads/" + PolicyUploadName;
+const TransferPolicyURL = "https://" + hostname + "/mgmt/tm/asm/file-transfer/uploads/" + PolicyUploadName;
+const Pname = "DeclartiveAPIPolicy";
+const createDeviceURL = "https://" + hostname + "/mgmt/tm/asm/policies";
+const createData = {name: Pname};
+const ImportPolicyURL = "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy";
+const timeOut = 30000
 
 InstallPolicy.prototype.onStart = function(success, error) {
     var err = false;
@@ -28,11 +34,6 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
   var policySCName = restOperation.getBody().policyname;
   var hostName = restOperation.getUri().host;
-
-  //for (var property in hostName) {
-    //logger.info(property + "=" + hostName[property])
-//  }
-
 
   logger.info(`onPost Event: Policy URL to pull from GIT: ${policySCName}`);
   logger.info(`onPost Event: hostname is: ${hostName}`);
