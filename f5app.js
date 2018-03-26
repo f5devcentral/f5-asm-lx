@@ -1,19 +1,10 @@
 const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/request");
 const async = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/async");
-const authorization = "Basic YWRtaW46YWRtaW4=";
+const username = 'admin';
+const password = 'admin';
 const timeOut = 35000;
-
-InstallPolicy.prototype.onStart = function(success, error) {
-    var err = false;
-    if (err) {
-        logger.severe("Install Policy onStart error: something went wrong");
-        error();
-    } else {
-        logger.info("Install Policy onStart success");
-        success();
-    }
-};
+const DEBUG = true;
 
 function InstallPolicy() {}
 
@@ -25,7 +16,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
   var policySCName = restOperation.getBody().policygitname;
   var policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
 
-  logger.info(`onPost Event: Policy Name ${policyFName} to pull URL from GIT: ${policySCName}`);
+  if (DEBUG) {logger.info(`onPost Event: Policy Name ${policyFName} to pull URL from GIT: ${policySCName}`); }
 
   async.waterfall([
       requestFromGit,
@@ -34,32 +25,39 @@ InstallPolicy.prototype.onPost = function (restOperation) {
       importPolicy,
       validatePolicyImport,
   ], function (err, result) {
-      logger.info("Finished to install Policy, with the follwing result:\n" + result);
-      var responsePostResult = {"install result":result};
+
+      if (DEBUG) {logger.info("Finished to install Policy, with the follwing result:\n" + result); }
+      var responsePostResult = {"policy_Name:": policySCName,
+                                "policy_id": policyid,
+                                "import_id": importid,
+                                "install_result":result};
       restOperation.setBody(responsePostResult);
       athis.completeRestOperation(restOperation);
 
   });
 
   function requestFromGit (gitpolicy) {
-      logger.info("Starting to Pull Policy from GIT");
+      if (DEBUG) {logger.info("Starting to Pull Policy from GIT"); }
 
       request (policySCName, function(err, response, body) {
           if (err) {
-              logger.severe("Something went wrong with GIT Pull: " + err);
+              if (DEBUG) {logger.severe("Something went wrong with GIT Pull: " + err); }
+              return;
           } else if (response.statusCode !== 200) {
-              logger.severe(`Error Pull Policy: Received Status: ${response.statusCode} from GIT: \n` + JSON.stringify(body));
+              if (DEBUG) {logger.severe(`Error Pull Policy: Received Status: ${response.statusCode} from GIT: \n` + JSON.stringify(body)); }
+
           } else {
-                  logger.info(`Pull Policy from GIT Completed: Received Response Code: ${response.statusCode} from GIT`);
+                if (DEBUG) {logger.info(`Pull Policy from GIT Completed: Received Response Code: ${response.statusCode} from GIT`); }
                   dataPolicy = Buffer.from(body).toString("base64");
                   contentLength = dataPolicy.length;
                   gitpolicy(null,dataPolicy,contentLength);
+                  return;
           }
       });
   }
 
   function transferPolicy(dataPolicy, contentLength, transferResult) {
-    logger.info("Starting to Transfer Policy to the BIG-IP");
+    if (DEBUG) {logger.info("Starting to Transfer Policy to the BIG-IP"); }
 
     const TransferPolicyURL = "https://localhost/mgmt/tm/asm/file-transfer/uploads/" + policyFName;
     const newContentRange = "0-" + (Number(contentLength) + 1) + "/" + (Number(contentLength) + 1);
@@ -67,9 +65,9 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     const TransferPolicyOptions = {
         url: TransferPolicyURL,
         method: "POST",
+        auth: {'user': username, 'pass': password},
         headers: {
             "Content-type": "application/json",
-            "authorization": authorization,
             "Content-Range": newContentRange, },
         json: dataPolicy
     };
@@ -77,52 +75,65 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     request(TransferPolicyOptions, function (err, response, body) {
 
         if (err) {
-            logger.severe("Something went wrong with Transfer Policy: " + err);
+            if (DEBUG) {logger.severe("Something went wrong with Transfer Policy: " + err); }
+            return;
         } else if (response.statusCode !== 200) {
-            logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}: \n` + JSON.stringify(body));
+            if (DEBUG) {logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}: \n` + JSON.stringify(body)); }
+            return;
         } else {
-                logger.info(`Transfer Policy File: Received Status code: ${response.statusCode} from BIG-IP`);
+            if (DEBUG) {logger.info(`Transfer Policy File: Received Status code: ${response.statusCode} from BIG-IP`); }
                 transferResult(null, response.statusMessage);
+                return;
         }
     });
   }
 
   function createPolicy (transferResult,policyID) {
-    logger.info(`Starting to Create a New ${policyFName} Policy`);
+    if (DEBUG) {logger.info(`Starting to Create a New ${policyFName} Policy`); }
 
     const CreatePolicyOptions = {
         url: "https://localhost/mgmt/tm/asm/policies",
         method: "POST",
-        headers: { "Content-type": "application/json","authorization": authorization },
+        auth: {'user': username, 'pass': password},
+        headers: { "Content-type": "application/json" },
         json: {"name": policyFName}
     };
 
     request (CreatePolicyOptions, function(err, response, body) {
 
         if (err) {
-            logger.severe("Something went wrong with Policy Creation Pull: " + err);
-        } else if (response.statusCode !== 201) {
+            if (DEBUG) {logger.severe("Something went wrong with Policy Creation: " + err); }
+            policyID(err,null);
+            return;
+        /*Return 404 due to bug 707169
+            } else if (response.statusCode !== 201) {
             logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP: \n ${body.message}`);
-            policyID(null,body.id);
-        } else {
-                logger.info(`Create Policy: Received Status code: ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`);
+            policyID(err,null);
+            return
+        */} else {
+                if (DEBUG) {logger.info(`Create Policy: Received Status code: ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`); }
                 policyID(null, body.id);
+                return;
         }
     });
   }
 
   function importPolicy (policyID,importIDResponse) {
-    logger.info(`Starting to Import Policy to the BIG-IP`);
-    var policyRef = "https://localhost/mgmt/tm/asm/policies/" + policyID
+    if (DEBUG) {logger.info(`Starting to Import Policy to the BIG-IP`); }
+    var policyRef = "https://localhost/mgmt/tm/asm/policies/" + policyID;
+    global.policyid = policyID;
 
     if (!policyID)  {
-      importIDResponse(null,'Policy already created');
+      if (DEBUG) {logger.severe(`Import Policy Error: no Policy ID return from BIG-IP Policy Creation. Policy Already Created`); }
+      importIDResponse(null,'Import Policy Error: no Policy ID return from BIG-IP Policy Creation. Policy Already Created');
+      return;
     } else {
 
             var ImportPolicyOptions = {
                 url: "https://localhost/mgmt/tm/asm/tasks/import-policy",
                 method: "POST",
-                headers: { "content-type": "application/json","authorization": authorization },
+                auth: {'user': username, 'pass': password},
+                headers: { "content-type": "application/json" },
                 json: {
                     "filename": policyFName,
                     "policyReference": { "link": policyRef }
@@ -131,27 +142,33 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
             request(ImportPolicyOptions, function (err, response, body) {
                 if (err) {
-                    logger.severe("Something went wrong with Import Policy: " + err);
+                    if (DEBUG) {logger.severe("Something went wrong with Import Policy: " + err); }
+                    importIDResponse(err,null);
+                    return;
                 } else if (response.statusCode !== 201) {
-                    logger.severe(`Import Policy File Error: Received Status code: ${response.statusCode} from BIGIP device \n` + JSON.stringify(body));
+                    if (DEBUG) {logger.severe(`Import Policy File Error: Received Status code: ${response.statusCode} from BIGIP device \n` + JSON.stringify(body)); }
+                    importIDResponse(err,null);
+                    return;
                 } else {
-                    logger.info(`Import Policy File: Received Status code: ${response.statusCode} from BIGIP device`);
+                    if (DEBUG) {logger.info(`Import Policy File: Received Status code: ${response.statusCode} from BIGIP device with Import Id: ${JSON.stringify(body.id)}`); }
                     importIDResponse(null, JSON.stringify(body.id));
+                    return;
                 }
             });
           }
   }
 
-  function validatePolicyImport (importIDResponse,validateImport) {
-    logger.info(`Starting to Validate Policy Import on BIG-IP`);
-    const importID = importIDResponse.replace(/^"+|"+$/g, '');
+  function validatePolicyImport (validateIDResponse,validateImport) {
+    if (DEBUG) {logger.info(`Starting to Validate Policy Import on BIG-IP`); }
+    const importID = validateIDResponse.replace(/^"+|"+$/g, '');
     const ValidatePolicyURL = "https://localhost/mgmt/tm/asm/tasks/import-policy/" + importID;
+    global.importid = importID
 
     var ValidatePolicyOptions = {
         url: ValidatePolicyURL,
         method: "GET",
-        headers: { "authorization": authorization }
-    };
+        auth: {'user': username, 'pass': password}
+      };
 
     setTimeout(function() {
 
@@ -159,22 +176,26 @@ InstallPolicy.prototype.onPost = function (restOperation) {
       var bodyResponse = JSON.parse(body);
 
           if (err) {
-              logger.severe("Something went wrong with Policy Creation: " + err);
+              if (DEBUG) {logger.severe("Something went wrong with Policy Creation: " + err); }
+              validateImport(err,null);
+              return;
           } else if (response.statusCode !== 200) {
-              logger.severe(`Validate Policy Creation Error: Received Status code: ${response.statusCode} from BIGIP device \n ${JSON.stringify(bodyResponse)}`);
+              if (DEBUG) {logger.severe(`Validate Policy Creation Error: Received Status code: ${response.statusCode} from BIGIP device \n ${JSON.stringify(bodyResponse)}`); }
+              validateImport(err,null);
+              return;
 
           } else if  (!body.search("COMPLETED")) {
-              logger.severe(`Validate Policy Creation Error: Received Status code: ${response.statusCode} from BIGIP device ${bodyResponse.status}`);
+              if (DEBUG) {logger.severe(`Validate Policy Creation Error: Received Status code: ${response.statusCode} from BIGIP device ${bodyResponse.status}`); }
           } else {
-              logger.info(`Validate Policy Creation Completed: Received Status code: ${response.statusCode} from BIGIP device ${bodyResponse.status}\n`);
+              if (DEBUG) {logger.info(`Validate Policy Creation Completed: Received Status code: ${response.statusCode} from BIGIP device ${bodyResponse.status}\n`); }
               validateImport(null, bodyResponse.result.message);
+              return;
           }
       });
     }, timeOut);
   }
 
 };
-
 
 InstallPolicy.prototype.getExampleState = function () {
   return {
