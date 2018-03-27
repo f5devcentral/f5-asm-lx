@@ -1,4 +1,4 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 const request = require("request");
 const username = 'admin';
 const password = 'admin';
@@ -10,29 +10,25 @@ const hostname = "10.241.188.23";
 const authorization = "Basic YWRtaW46YWRtaW4=";
 const TransferPolicyURL = "https://" + hostname + "/mgmt/tm/asm/file-transfer/uploads/" + policyFName;
 
-function CreatePolicy(url) {
+var CreatePolicy = function() {
 
-    var TransferPolicy = new Promise ((resolve, reject) => {
+  return new Promise (function(resolve, reject) {
 
-    request (url, function(err, response, body) {
-        if (err) {
-            console.log("Something went wrong with GIT Pull: " + err);
-            reject(err)
-        } else if (response.statusCode !== 200) {
-            console.log(`Error Pull Policy: Received Status: ${response.statusCode} from GIT:\n ${response.statusMessage}`);
-            reject(reponse)
-        } else {
-                console.log(`Pull Policy from GIT Completed: Received Response Code: ${response.statusMessage} from GIT`);
-                dataPolicy = Buffer.from(body).toString("base64");
-                contentLength = dataPolicy.length;
-                resolve([dataPolicy,contentLength]);
-        }
+  request (giturl, function(err, response, body) {
+      if (err) {
+          console.log("Something went wrong with GIT Pull: " + err);
+          reject(err)
+      } else if (response.statusCode !== 200) {
+          console.log(`Error Pull Policy: Received Status: ${response.statusCode} from GIT:\n ${response.statusMessage}`);
+          reject(reponse)
+      } else {
+              console.log(`Pull Policy from GIT Completed: Received Response Code: ${response.statusMessage} from GIT`);
+              dataPolicy = Buffer.from(body).toString("base64");
+              contentLength = dataPolicy.length;
+              resolve([dataPolicy,contentLength]);
+      }
     })
   })
-  return TransferPolicy;
-}
-
-CreatePolicy(giturl)
   .then(function(result) {
 
     const newContentRange = "0-" + (Number(result[1]) + 1) + "/" + (Number(result[1]) + 1);
@@ -180,3 +176,6 @@ CreatePolicy(giturl)
     console.log("Catch: " + err)
   }
 )
+}
+
+CreatePolicy();
