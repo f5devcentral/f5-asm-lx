@@ -1,13 +1,10 @@
 const logger = require('f5-logger').getInstance();
-const request = require("/var/config/rest/iapps/InstallPolicy/nodejs/node_modules/request");
+const request = require("/var/config/rest/iapps/InstallPolicy/node_modules/request");
 const username = 'admin';
 const password = 'admin';
+const ver = "13.1.0";
 const DEBUG = true;
-const timeOut = 30000;
-const policyFName = "DeclarativeAPIPolicy";
-const hostname = "localhost";
-const authorization = "Basic YWRtaW46YWRtaW4=";
-const TransferPolicyURL = "https://" + hostname + "/mgmt/tm/asm/file-transfer/uploads/" + policyFName;
+const timeOut = 20000;
 
 function InstallPolicy() {}
 
@@ -39,18 +36,21 @@ function InstallPolicy() {}
     })
     .then(function(result) {
       logger.info(`Starting to Transfer Policy: ${policyFName} to the BIG-IP`);
-      const newContentRange = "0-" + (Number(result[1]) + 1) + "/" + (Number(result[1]) + 1);
-      const TransferPolicyOptions = {
-        url: TransferPolicyURL,
-        method: "POST",
-        auth: {'user': username, 'pass': password},
-        headers: {
-            "Content-type": "application/json",
-            "Content-Range": newContentRange, },
-        json: result[0]
-      };
 
       return new Promise (function(resolve,reject) {
+
+        const newContentRange = "0-" + (Number(result[1]) + 1) + "/" + (Number(result[1]) + 1);
+        const TransferPolicyURL = "https://localhost/mgmt/tm/asm/file-transfer/uploads/" + policyFName + `?ver=${ver}`;
+        const TransferPolicyOptions = {
+          url: TransferPolicyURL,
+          method: "POST",
+          auth: {'user': username, 'pass': password},
+          rejectUnauthorized: false,
+          headers: {
+              "Content-type": "application/json",
+              "Content-Range": newContentRange, },
+          json: result[0]
+        };
 
       request(TransferPolicyOptions, function (err, response, body) {
 
@@ -76,9 +76,10 @@ function InstallPolicy() {}
           if (DEBUG) {logger.info(`Starting to Create a New Policy: ${policyFName}`); }
 
           const CreatePolicyOptions = {
-              url: "https://"+ hostname + "/mgmt/tm/asm/policies",
+              url: "https://localhost/mgmt/tm/asm/policies/" + `?ver=${ver}`,
               method: "POST",
               auth: {'user': username, 'pass': password},
+              rejectUnauthorized: false,
               headers: { "Content-type": "application/json" },
               json: {"name": policyFName}
           };
@@ -94,7 +95,7 @@ function InstallPolicy() {}
                   policyID(err,null);
                   return
               */} else {
-                      if (DEBUG) {logger.severe(`Create Policy: Received Status code: ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`); }
+                      if (DEBUG) {logger.severe(`Create Policy: Received Status code: ${response.statusCode}, from BIG-IP policy ID is: ${body.id}`); }
                       resolve(body.id);
               }
           });
@@ -102,7 +103,7 @@ function InstallPolicy() {}
     })
     .then(function(policyID) {
       if (DEBUG) {logger.info(`Received Policy ID: ${policyID}, Starting to Import Policy to the BIG-IP`); }
-      var policyRef = "https://" + hostname + "/mgmt/tm/asm/policies/" + policyID;
+      var policyRef = "https://localhost/mgmt/tm/asm/policies/" + policyID + `?ver=${ver}`;
 
 
       if (!policyID)  {
@@ -113,9 +114,10 @@ function InstallPolicy() {}
           return new Promise (function(resolve, reject) {
 
               var ImportPolicyOptions = {
-                  url: "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy",
+                  url: "https://localhost/mgmt/tm/asm/tasks/import-policy/" + `?ver=${ver}`,
                   method: "POST",
                   auth: {'user': username, 'pass': password},
+                  rejectUnauthorized: false,
                   headers: { "content-type": "application/json" },
                   json: {
                       "filename": policyFName,
@@ -143,7 +145,7 @@ function InstallPolicy() {}
         if (DEBUG) {logger.info(`Starting to Validate Policy Import on BIG-IP`); }
 
         const importID = validateIDResponse.replace(/^"+|"+$/g, '');
-        const ValidatePolicyURL = "https://" + hostname + "/mgmt/tm/asm/tasks/import-policy/" + importID;
+        const ValidatePolicyURL = "https://localhost/mgmt/tm/asm/tasks/import-policy/" + importID + `?ver=${ver}`;
 
 
         return new Promise (function(resolve,reject) {
@@ -151,6 +153,7 @@ function InstallPolicy() {}
         var ValidatePolicyOptions = {
             url: ValidatePolicyURL,
             method: "GET",
+            rejectUnauthorized: false,
             auth: {'user': username, 'pass': password}
           };
 
@@ -179,6 +182,8 @@ function InstallPolicy() {}
     })
     .then(function(Msg) {
       logger.info("Finished To Validate Import\n" + Msg);
+      restOperation.setBody(Msg);
+      athis.completeRestOperation(restOperation);
     })
     .catch(function(err) {
       logger.info("Eror Catch: " + err);
