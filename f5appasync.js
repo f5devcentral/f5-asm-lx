@@ -89,12 +89,11 @@ function InstallPolicy() {}
               if (err) {
                   if (DEBUG) {logger.severe("Something went wrong with Policy Creation: " + err); }
                   reject(err);
-              /*Return 404 due to bug 707169
+              //Return 404 due to bug 707169
                   } else if (response.statusCode !== 201) {
                   logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP: \n ${body.message}`);
-                  policyID(err,null);
-                  return
-              */} else {
+                  resolve(body.message);
+              } else {
                       if (DEBUG) {logger.severe(`Create Policy: Received Status code: ${response.statusCode}, from BIG-IP policy ID is: ${body.id}`); }
                       resolve(body.id);
               }
@@ -103,8 +102,8 @@ function InstallPolicy() {}
     })
     .then(function(policyID) {
       if (DEBUG) {logger.info(`Received Policy ID: ${policyID}, Starting to Import Policy to the BIG-IP`); }
-      var policyRef = "https://localhost/mgmt/tm/asm/policies/" + policyID + `?ver=${ver}`;
-
+      global.policyid = policyID;
+      const policyRef = "https://localhost/mgmt/tm/asm/policies/" + policyID + `?ver=${ver}`;
 
       if (!policyID)  {
         if (DEBUG) {logger.severe(`Import Policy Error: no Policy ID return from BIG-IP Policy Creation. Policy Already Created`); }
@@ -144,7 +143,7 @@ function InstallPolicy() {}
 
         if (DEBUG) {logger.info(`Starting to Validate Policy Import on BIG-IP`); }
 
-        const importID = validateIDResponse.replace(/^"+|"+$/g, '');
+        global.importID = validateIDResponse.replace(/^"+|"+$/g, '');
         const ValidatePolicyURL = "https://localhost/mgmt/tm/asm/tasks/import-policy/" + importID + `?ver=${ver}`;
 
 
@@ -181,20 +180,20 @@ function InstallPolicy() {}
       });
     })
     .then(function(Msg) {
-      logger.info("Finished To Validate Import\n" + Msg);
-      restOperation.setBody(Msg);
+
+      var responsePostResult = {"policy_Name:": policySCName,
+                                "policy_id": policyid,
+                                "import_id": importID,
+                                "install_result":Msg};
+
+      if (DEBUG) { logger.info("Finished To Install Policy:\n" + JSON.stringify(responsePostResult)); }
+      restOperation.setBody(responsePostResult);
       athis.completeRestOperation(restOperation);
     })
     .catch(function(err) {
       logger.info("Eror Catch: " + err);
     }
   );
-};
-
-InstallPolicy.prototype.getExampleState = function () {
-  return {
-    "value": "your_string"
-  };
 };
 
 module.exports = InstallPolicy;
