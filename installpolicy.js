@@ -1,3 +1,4 @@
+const restHelper = require("/usr/share/rest/node/src/infrastructure/restHelper");
 const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/node_modules/request");
 const username = 'admin';
@@ -5,14 +6,14 @@ const password = 'admin';
 const bigipCredentials = {'user': username, 'pass': password};
 const ver = "13.1.0";
 const DEBUG = true;
-const timeOut = 24000;
+const timeOut = 30000;
 
 function InstallPolicy() {}
 
-  InstallPolicy.prototype.WORKER_URI_PATH = "asm/install_policy";
-  InstallPolicy.prototype.isPublic = true;
+InstallPolicy.prototype.WORKER_URI_PATH = "asm/install_policy";
+InstallPolicy.prototype.isPublic = true;
+InstallPolicy.prototype.onPost = function (restOperation) {
 
-  InstallPolicy.prototype.onPost = function (restOperation) {
     athis = this;
     var policySCName = restOperation.getBody().policyvcsname;
     var policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
@@ -23,10 +24,10 @@ function InstallPolicy() {}
 
     request (policySCName, function(err, response, body) {
         if (err) {
-            logger.severe("Error Pull Policy: VCS Policy Pull Error: \n" + err);
+            logger.severe(`Error Pull Policy: VCS Policy Pull Error:\n${err}`);
             reject(err);
         } else if (response.statusCode !== 200) {
-            logger.severe(`Error Pull Policy: Received Status: ${response.statusCode} from VCS:\n ${response.statusMessage}`);
+            logger.severe(`Error Pull Policy: Received Status: ${response.statusCode} from VCS:\n${response.statusMessage}`);
             reject(reponse);
         } else {
               if (DEBUG) { logger.info(`Pull Policy from VCS Completed: Received Response Code: ${response.statusCode} ${response.statusMessage} from VCS`); }
@@ -61,7 +62,7 @@ function InstallPolicy() {}
             logger.severe("Something went wrong with Transfer Policy: " + err);
             reject(err);
         } else if (response.statusCode !== 200) {
-            logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}: \n` + JSON.stringify(body));
+            logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}:\n` + JSON.stringify(body));
             reject(response);
         } else {
             if (DEBUG) { logger.info(`Transfer Policy File to BIGIP Completed: Received Status code: ${response.statusCode} from BIG-IP`); }
@@ -90,10 +91,10 @@ function InstallPolicy() {}
                   if (DEBUG) {logger.severe("Create Policy Error: " + err); }
                   reject(err);
                 } else if (response.statusCode !== 201) {
-                  logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP: \n ${body.message}`);
+                  logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body.message}`);
                   resolve(body.message);
                 } else {
-                      if (DEBUG) {logger.info(`Create Policy Completed: Received Status code: ${response.statusCode}, from BIG-IP policy ID is: ${body.id}`); }
+                      if (DEBUG) {logger.info(`Create Policy Completed: Received Status code ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`); }
                       resolve(body.id);
                 }
             });
@@ -126,10 +127,10 @@ function InstallPolicy() {}
 
               request(ImportPolicyOptions, function (err, response, body) {
                   if (err) {
-                      if (DEBUG) {logger.severe("Import Policy Error: " + err); }
+                      if (DEBUG) {logger.severe(`Import Policy Error: ${err}`); }
                       reject(err);
                   } else if (response.statusCode !== 201) {
-                      if (DEBUG) {logger.severe(`Import Policy Error, Received Status code: ${response.statusCode} from BIGIP device: \n ${JSON.stringify(body)}`); }
+                      if (DEBUG) {logger.severe(`Import Policy Error, Received Status code: ${response.statusCode} from BIGIP device:\n${JSON.stringify(body)}`); }
                       reject(JSON.stringify(body));
                   } else {
                       if (DEBUG) {logger.info(`Import Policy File Completed, Received Status code: ${response.statusCode} from BIGIP device with import Id: ${JSON.stringify(body.id)}`); }
@@ -162,11 +163,11 @@ function InstallPolicy() {}
               var bodyResponse = JSON.parse(body);
 
                 if (err) {
-                  if (DEBUG) {logger.severe("Validate Policy Import Error: " + err); }
+                  if (DEBUG) {logger.severe(`Validate Policy Import Error: ${err}`); }
                   reject(err);
 
                 } else if (response.statusCode !== 200) {
-                  if (DEBUG) {logger.severe(`Validate Policy Import Error, Received Status code: ${response.statusCode} from BIGIP device: \n ${JSON.stringify(bodyResponse)}`); }
+                  if (DEBUG) {logger.severe(`Validate Policy Import Error, Received Status code: ${response.statusCode} from BIGIP device:\n${JSON.stringify(bodyResponse)}`); }
                   reject(JSON.stringify(bodyResponse));
                 } else if  (!body.search("COMPLETED")) {
                   if (DEBUG) {logger.severe(`Validate Policy Creation Error, Received Status code: ${response.statusCode} from BIGIP device: ${bodyResponse.status}`); }
