@@ -1,10 +1,9 @@
-const restHelper = require("/usr/share/rest/node/src/infrastructure/restHelper");
 const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/node_modules/request");
 const username = 'admin';
 const password = 'admin';
 const bigipCredentials = {'user': username, 'pass': password};
-const ver = "13.1.0";
+const ver = "13.1.0"; //ASM version
 const DEBUG = true;
 const timeOut = 30000;
 
