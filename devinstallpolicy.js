@@ -1,3 +1,4 @@
+"use strict";
 const logger = require('f5-logger').getInstance();
 const request = require("/var/config/rest/iapps/InstallPolicy/node_modules/request");
 const username = 'admin';

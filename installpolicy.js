@@ -5,7 +5,7 @@ const password = 'admin';
 const bigipCredentials = {'user': username, 'pass': password};
 const ver = "13.1.0"; //ASM version
 const DEBUG = true;
-const timeOut = 25000;
+const timeOut = 30000;
 
 function InstallPolicy() {}
 
@@ -33,7 +33,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
                                   "policy_id": policyid,
                                   "import_id": importID,
                                   "install_result":Msg
-                                  }
+                                };
 
         restOperation.setBody(responsePostResult);
         athis.completeRestOperation(restOperation);
@@ -43,9 +43,9 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     }).catch(function(err) {
       logger.severs("Error Catch: " + err);
     });
-}
+};
 
-// function to pull XML policy from source control and save it to memeory as base64 file
+// function to pull XML policy from source control and save it to memeory in base64 format
 
 let pullPolicy = function(policySCName) {
 
@@ -65,12 +65,12 @@ let pullPolicy = function(policySCName) {
               resolve([dataPolicy,contentLength]);
       }
     });
-  })
-}
+  });
+};
 
 // function to transfer the pulled policy and upload ASM device
 
-let transferPolicy = function(result) {
+var transferPolicy = function(result) {
   if (DEBUG) { logger.info(`Starting to Transfer Policy: ${policyFName} to the BIG-IP`); }
 
   return new Promise (function(resolve,reject) {
@@ -90,23 +90,23 @@ let transferPolicy = function(result) {
 
   request(TransferPolicyOptions, function (err, response, body) {
 
-    if (err) {
-        logger.severe("Something went wrong with Transfer Policy: " + err);
-        reject(err);
-    } else if (response.statusCode !== 200) {
-        logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}:\n` + JSON.stringify(body));
-        reject(response);
-    } else {
-        if (DEBUG) { logger.info(`Transfer Policy File to BIGIP Completed: Received Status code: ${response.statusCode} from BIG-IP`); }
-        resolve (response.statusCode);
-    }
+      if (err) {
+          logger.severe("Something went wrong with Transfer Policy: " + err);
+          reject(err);
+      } else if (response.statusCode !== 200) {
+          logger.severe(`Transfer Policy Error: Recieved status code: ${response.statusCode}:\n` + JSON.stringify(body));
+          reject(response);
+      } else {
+          if (DEBUG) { logger.info(`Transfer Policy File to BIGIP Completed: Received Status code: ${response.statusCode} from BIG-IP`); }
+          resolve (response.statusCode);
+      }
+    });
   });
-});
-}
+};
 
 // function to create new ASM policy based on the imported file name
 
-let createPolicy = function(transferResult) {
+var createPolicy = function(transferResult) {
       if (DEBUG) { logger.info(`Starting to Create Policy Name: ${policyFName}, Recieve Transfer Policy Status: ${transferResult}`); }
 
       return new Promise(function(resolve, reject) {
@@ -134,11 +134,11 @@ let createPolicy = function(transferResult) {
               }
         });
     });
-}
+};
 
 // function to import the imported policy into the new policy that just created
 
-let importPolicy = function(policyID) {
+var importPolicy = function(policyID) {
   if (DEBUG) {logger.info(`Starting to Import Policy into the BIG-IP Created Policy ID: ${policyID} `); }
 
   global.policyid = policyID;
@@ -177,11 +177,11 @@ let importPolicy = function(policyID) {
           });
       });
   }
-}
+};
 
 // function to validate the import result and response it back to the caller
 
-let validatePolicy = function(validateIDResponse) {
+var validatePolicy = function(validateIDResponse) {
 
       if (DEBUG) {logger.info(`Starting to Validate Policy Import on BIG-IP`); }
 
@@ -220,6 +220,6 @@ let validatePolicy = function(validateIDResponse) {
           });
       }, timeOut);
   });
-}
+};
 
 module.exports = InstallPolicy;
