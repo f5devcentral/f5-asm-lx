@@ -1,4 +1,3 @@
-//"use strict";
 const logger = require('f5-logger').getInstance(),
       request = require("../node_modules/request"),
       username = 'admin',
@@ -46,7 +45,9 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     });
 };
 
+// ======================================================================================
 // function to pull XML policy from source control and save it to memeory as base64 file
+// ======================================================================================
 
 var pullPolicy = function(policySCName) {
 
@@ -61,17 +62,18 @@ var pullPolicy = function(policySCName) {
           reject(response);
       } else {
             if (DEBUG) { logger.info(`Pull Policy from VCS Completed: Received Response Code: ${response.statusCode} ${response.statusMessage} from VCS`); }
-              //var dataPolicy;
-              var dataPolicy = Buffer.from(body).toString("base64");
-              //var contentLength;
-              var contentLength = dataPolicy.length;
+
+              var dataPolicy = Buffer.from(body).toString("base64"),
+                  contentLength = dataPolicy.length;
               resolve([dataPolicy,contentLength]);
       }
     });
   });
 };
 
+// ========================================================
 // function to transfer the policy and upload to ASM device
+// ========================================================
 
 var transferPolicy = function(result) {
   if (DEBUG) { logger.info(`Starting to Transfer Policy: ${policyFName} to the BIG-IP`); }
@@ -107,7 +109,9 @@ var transferPolicy = function(result) {
 });
 };
 
+// =================================================================
 // function to create new ASM policy based on the imported file name
+// =================================================================
 
 var createPolicy = function(transferResult) {
       if (DEBUG) { logger.info(`Starting to Create Policy Name: ${policyFName}, Recieve Transfer Policy Status: ${transferResult}`); }
@@ -139,7 +143,9 @@ var createPolicy = function(transferResult) {
     });
 };
 
-// function to import the imported policy into the new policy that just created
+// ============================================================================
+// function to import the pulled policy into the new policy that just created
+// ============================================================================
 
 var importPolicy = function(policyID) {
   if (DEBUG) {logger.info(`Starting to Import Policy into the BIG-IP Created Policy ID: ${policyID} `); }
@@ -182,7 +188,9 @@ var importPolicy = function(policyID) {
   }
 };
 
+// =========================================================================
 // function to validate the import result and response it back to the caller
+// =========================================================================
 
 var validatePolicy = function(validateIDResponse) {
 
