@@ -1,12 +1,12 @@
-"use strict";
-const logger = require('f5-logger').getInstance();
-const request = require("/var/config/rest/iapps/InstallPolicy/node_modules/request");
-const username = 'admin';
-const password = 'admin';
-const bigipCredentials = {'user': username, 'pass': password};
-const ver = "13.1.0"; //ASM version
-const DEBUG = true;
-const timeOut = 25000;
+//"use strict";
+const logger = require('f5-logger').getInstance(),
+      request = require("../node_modules/request"),
+      username = 'admin',
+      password = 'admin',
+      bigipCredentials = {'user': username, 'pass': password},
+      ver = "13.1.0", //ASM Version
+      DEBUG = true,
+      timeOut = 30000;
 
 function InstallPolicy() {}
 
@@ -14,9 +14,9 @@ InstallPolicy.prototype.WORKER_URI_PATH = "asm/install_policy";
 InstallPolicy.prototype.isPublic = true;
 InstallPolicy.prototype.onPost = function (restOperation) {
 
-    athis = this;
-    var policySCName = restOperation.getBody().policyvcsname;
-    var policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
+    var athis = this,
+        policySCName = restOperation.getBody().policyvcsname,
+        policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
 
     if (DEBUG) {logger.info(`Starting to Pull Policy from VCS URL: ${policySCName}`); }
 
@@ -34,7 +34,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
                                   "policy_id": policyid,
                                   "import_id": importID,
                                   "install_result":Msg
-                                  }
+                                };
 
         restOperation.setBody(responsePostResult);
         athis.completeRestOperation(restOperation);
@@ -42,13 +42,15 @@ InstallPolicy.prototype.onPost = function (restOperation) {
         if (DEBUG) { logger.info("Completed To Install Policy:\n" + JSON.stringify(responsePostResult)); }
 
     }).catch(function(err) {
-      logger.severs("Error Catch: " + err);
+      logger.severe("Error Catch: " + err);
+      restOperation.setBody(responsePostResult);
+      athis.completeRestOperation(restOperation);
     });
-}
+};
 
 // function to pull XML policy from source control and save it to memeory as base64 file
 
-let pullPolicy = function(policySCName) {
+var pullPolicy = function(policySCName) {
 
   return new Promise (function(resolve, reject) {
 
@@ -61,24 +63,26 @@ let pullPolicy = function(policySCName) {
           reject(response);
       } else {
             if (DEBUG) { logger.info(`Pull Policy from VCS Completed: Received Response Code: ${response.statusCode} ${response.statusMessage} from VCS`); }
-              dataPolicy = Buffer.from(body).toString("base64");
-              contentLength = dataPolicy.length;
+              //var dataPolicy;
+              var dataPolicy = Buffer.from(body).toString("base64");
+              //var contentLength;
+              var contentLength = dataPolicy.length;
               resolve([dataPolicy,contentLength]);
       }
     });
-  })
-}
+  });
+};
 
-// function to transfer the pulled policy and upload ASM device
+// function to transfer the policy and upload to ASM device
 
-let transferPolicy = function(result) {
+var transferPolicy = function(result) {
   if (DEBUG) { logger.info(`Starting to Transfer Policy: ${policyFName} to the BIG-IP`); }
 
   return new Promise (function(resolve,reject) {
 
-    const newContentRange = "0-" + (Number(result[1]) + 1) + "/" + (Number(result[1]) + 1);
-    const TransferPolicyURL = `https://localhost/mgmt/tm/asm/file-transfer/uploads/${policyFName}?ver=${ver}`;
-    const TransferPolicyOptions = {
+    var newContentRange = "0-" + (Number(result[1]) + 1) + "/" + (Number(result[1]) + 1);
+    var TransferPolicyURL = `https://localhost/mgmt/tm/asm/file-transfer/uploads/${policyFName}?ver=${ver}`;
+    var TransferPolicyOptions = {
       url: TransferPolicyURL,
       method: "POST",
       auth: bigipCredentials,
@@ -103,16 +107,16 @@ let transferPolicy = function(result) {
     }
   });
 });
-}
+};
 
 // function to create new ASM policy based on the imported file name
 
-let createPolicy = function(transferResult) {
+var createPolicy = function(transferResult) {
       if (DEBUG) { logger.info(`Starting to Create Policy Name: ${policyFName}, Recieve Transfer Policy Status: ${transferResult}`); }
 
       return new Promise(function(resolve, reject) {
 
-          const CreatePolicyOptions = {
+          var CreatePolicyOptions = {
             url: `https://localhost/mgmt/tm/asm/policies?ver=${ver}`,
             method: "POST",
             auth: bigipCredentials,
@@ -135,15 +139,15 @@ let createPolicy = function(transferResult) {
               }
         });
     });
-}
+};
 
 // function to import the imported policy into the new policy that just created
 
-let importPolicy = function(policyID) {
+var importPolicy = function(policyID) {
   if (DEBUG) {logger.info(`Starting to Import Policy into the BIG-IP Created Policy ID: ${policyID} `); }
 
-  global.policyid = policyID;
-  const policyRef = `https://localhost/mgmt/tm/asm/policies/${policyID}?ver=${ver}`;
+  var policyid = policyID;
+  var policyRef = `https://localhost/mgmt/tm/asm/policies/${policyID}?ver=${ver}`;
 
   if (!policyID)  {
     if (DEBUG) {logger.severe(`Import Policy Error: no Policy ID return from BIG-IP Policy Creation. Policy Already Created`); }
@@ -178,26 +182,25 @@ let importPolicy = function(policyID) {
           });
       });
   }
-}
+};
 
 // function to validate the import result and response it back to the caller
 
-let validatePolicy = function(validateIDResponse) {
+var validatePolicy = function(validateIDResponse) {
 
       if (DEBUG) {logger.info(`Starting to Validate Policy Import on BIG-IP`); }
 
-      global.importID = validateIDResponse.replace(/^"+|"+$/g, '');
-      const ValidatePolicyURL = `https://localhost/mgmt/tm/asm/tasks/import-policy/${importID}?ver=${ver}`;
-
+      var importID = validateIDResponse.replace(/^"+|"+$/g, '');
+      var ValidatePolicyURL = `https://localhost/mgmt/tm/asm/tasks/import-policy/${importID}?ver=${ver}`;
 
       return new Promise (function(resolve,reject) {
 
-      var ValidatePolicyOptions = {
-          url: ValidatePolicyURL,
-          method: "GET",
-          rejectUnauthorized: false,
-          auth: bigipCredentials
-        };
+        var ValidatePolicyOptions = {
+            url: ValidatePolicyURL,
+            method: "GET",
+            rejectUnauthorized: false,
+            auth: bigipCredentials
+          };
 
         setTimeout(function() {
 
@@ -221,6 +224,6 @@ let validatePolicy = function(validateIDResponse) {
           });
       }, timeOut);
   });
-}
+};
 
 module.exports = InstallPolicy;
