@@ -15,14 +15,20 @@ What the extension is doing:
 4. Extension import the pulled policy into the new created policy
 5. Extension validate the import policy process and provide back the results
 
-How to Deploy extension:
-1. Copy "Install Policy" extension code file: "installpolicy.js" from the repository into your environment
+How to Deploy extension: Two options
+
+First Option:
+1. Copy "Install Policy" extension code file: "installpolicy.js" from the repository into your BIGIP
 2. Follow the instruction to deploy iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 3. Add "request" module to support the extension:
 
    a. Login to the BIGIP cli
    b. Change directory to: '/var/config/rest/iapps/"your_project_name"/'
    c. Install "request" module by clicking: "npm install request"  
+
+Second Option:
+1. Copy lastest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM
+2. Follow the instruction to deploy RPM iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 How to Use Extension:
 1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
