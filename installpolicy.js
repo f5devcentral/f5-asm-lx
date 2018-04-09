@@ -41,7 +41,9 @@ InstallPolicy.prototype.onPost = function (restOperation) {
         if (DEBUG) { logger.info("Completed To Install Policy:\n" + JSON.stringify(responsePostResult)); }
 
     }).catch(function(err) {
-      logger.severs("Error Catch: " + err);
+      logger.severe("Error Catch: " + err);
+      restOperation.setBody(responsePostResult);
+      athis.completeRestOperation(restOperation);
     });
 };
 
