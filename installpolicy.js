@@ -14,8 +14,8 @@ InstallPolicy.prototype.isPublic = true;
 InstallPolicy.prototype.onPost = function (restOperation) {
 
     var athis = this,
-        policySCName = restOperation.getBody().policyvcsname,
-        policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
+        global.policySCName = restOperation.getBody().policyvcsname,
+        global.policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
 
     if (DEBUG) {logger.info(`Starting to Pull Policy from VCS URL: ${policySCName}`); }
 
