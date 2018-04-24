@@ -20,7 +20,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
     if (DEBUG) {logger.info(`Starting to Pull Policy from VCS URL: ${policySCName}`); }
 
-    pullPolicy(policySCName).then(function(result) {
+    async function pullPolicy(policySCName) {
       return transferPolicy(result);
     }).then(function(result) {
       return createPolicy(result);
@@ -29,6 +29,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     }).then(function(result){
       return validatePolicy(result);
     }).then(function(Msg) {
+    }
 
         var responsePostResult = {"policy_vcsame:": policySCName,
                                   "policy_id": policyid,
@@ -47,6 +48,12 @@ InstallPolicy.prototype.onPost = function (restOperation) {
       athis.completeRestOperation(restOperation);
     });
 };
+
+InstallPolicy.prototype.onDelete = function (restOperation) {
+  var athis = this,
+      policyID = restOperation.getBody().policyid;
+
+}
 
 // function to pull XML policy from source control and save it to memeory as base64 file
 
@@ -135,6 +142,36 @@ var createPolicy = function(transferResult) {
                 resolve(body.message);
               } else {
                     if (DEBUG) {logger.info(`Create Policy Completed: Received Status code ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`); }
+                    resolve(body.id);
+              }
+        });
+    });
+};
+
+// Delete Policy Function
+
+var deletePolicy = function(transferResult) {
+      if (DEBUG) { logger.info(`Starting to Create Policy Name: ${policyFName}, Recieve Transfer Policy Status: ${transferResult}`); }
+
+      return new Promise(function(resolve, reject) {
+
+          var CreatePolicyOptions = {
+            url: `https://localhost/mgmt/tm/asm/policies/${policyID}?ver=${ver}`,
+            method: "DELETE",
+            auth: bigipCredentials,
+            rejectUnauthorized: false,
+            headers: { "Content-type": "application/json" },
+
+          request (CreatePolicyOptions, function(err, response, body) {
+
+              if (err) {
+                if (DEBUG) {logger.severe("Delete Policy Error: " + err); }
+                reject(err);
+              } else if (response.statusCode !== 201) {
+                logger.severe(`Delete Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body.message}`);
+                resolve(body.message);
+              } else {
+                    if (DEBUG) {logger.info(`Delete Policy Completed: Received Status code ${response.statusCode} from BIG-IP`); }
                     resolve(body.id);
               }
         });
