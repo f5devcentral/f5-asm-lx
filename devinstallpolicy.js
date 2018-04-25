@@ -1,12 +1,14 @@
-//"use strict";
-const logger = require('f5-logger').getInstance(),
+  var logger = require('f5-logger').getInstance(),
       request = require("../node_modules/request"),
       username = 'admin',
       password = 'admin',
       bigipCredentials = {'user': username, 'pass': password},
       ver = "13.1.0", //ASM Version
       DEBUG = true,
-      timeOut = 30000;
+      timeOut = 15000,
+      LtimeOut = 5000;
+
+
 
 function InstallPolicy() {}
 
@@ -20,7 +22,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
     if (DEBUG) {logger.info(`Starting to Pull Policy from VCS URL: ${policySCName}`); }
 
-    async function pullPolicy(policySCName) {
+    pullPolicy(policySCName).then(function(result) {
       return transferPolicy(result);
     }).then(function(result) {
       return createPolicy(result);
@@ -29,7 +31,6 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     }).then(function(result){
       return validatePolicy(result);
     }).then(function(Msg) {
-    }
 
         var responsePostResult = {"policy_vcsame:": policySCName,
                                   "policy_id": policyid,
@@ -49,11 +50,37 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     });
 };
 
-InstallPolicy.prototype.onDelete = function (restOperation) {
-  var athis = this,
-      policyID = restOperation.getBody().policyid;
+// InstallPolicy.prototype.onDelete = function (restOperation) {
+//
+//   var dthis = this,
+//       delPolicyFName = restOperation.getBody().policyname;
+//
+//   if (DEBUG) {logger.info(`Starting to Delete Policy with the policy id: ${delPolicyFName}`); }
+//
+//     getPolicyId(delPolicyFName).then(function(policyid) {
+//       return delPolicy(delPolicyFName).then(function(Msg) {
+//
+//           var responseDeleteResult = { "policy_id": delPolicyFName,
+//                                        "install_result":Msg
+//                                      };
+//
+//           restOperation.setBody(responseDeleteResult);
+//           dthis.completeRestOperation(restOperation);
+//
+//           if (DEBUG) { logger.info("Completed To Delete Policy:\n" + JSON.stringify(responseDeleteResult)); }
+//
+//       }).catch(function(err) {
+//         logger.severe("Error Catch: " + err);
+//         restOperation.setBody(responsePostResult);
+//         dthis.completeRestOperation(restOperation);
+//       });
+//     });
+// };
 
-}
+InstallPolicy.prototype.onDelete = function(restOperation) {
+    this.state = {};
+    this.completeRestOperation(restOperation.setBody(this.state));
+};
 
 // function to pull XML policy from source control and save it to memeory as base64 file
 
@@ -124,7 +151,7 @@ var createPolicy = function(transferResult) {
       return new Promise(function(resolve, reject) {
 
           var CreatePolicyOptions = {
-            url: `https://localhost/mgmt/tm/asm/policies?ver=${ver}`,
+            url: `https://localhost/mgmt/tm/asm/policies`,
             method: "POST",
             auth: bigipCredentials,
             rejectUnauthorized: false,
@@ -150,19 +177,21 @@ var createPolicy = function(transferResult) {
 
 // Delete Policy Function
 
-var deletePolicy = function(transferResult) {
-      if (DEBUG) { logger.info(`Starting to Create Policy Name: ${policyFName}, Recieve Transfer Policy Status: ${transferResult}`); }
+var deletePolicy = function(delPolicyFName) {
+
+      if (DEBUG) { logger.info(`Starting to Delete Policy Name: ${delPolicyFName}`); }
 
       return new Promise(function(resolve, reject) {
 
-          var CreatePolicyOptions = {
-            url: `https://localhost/mgmt/tm/asm/policies/${policyID}?ver=${ver}`,
+          var DeletePolicyOptions = {
+            url: `https://localhost/mgmt/tm/asm/policies/${delPolicyFName}?ver=${ver}`,
             method: "DELETE",
             auth: bigipCredentials,
             rejectUnauthorized: false,
-            headers: { "Content-type": "application/json" },
+            headers: { "Content-type": "application/json" }
+          };
 
-          request (CreatePolicyOptions, function(err, response, body) {
+          request (DeletePolicyOptions, function(err, response, body) {
 
               if (err) {
                 if (DEBUG) {logger.severe("Delete Policy Error: " + err); }
@@ -175,8 +204,9 @@ var deletePolicy = function(transferResult) {
                     resolve(body.id);
               }
         });
-    });
+  });
 };
+
 
 // function to import the imported policy into the new policy that just created
 
@@ -263,4 +293,46 @@ var validatePolicy = function(validateIDResponse) {
   });
 };
 
+var getPolicyId = function(policyname) {
+
+      if (DEBUG) {logger.info(`Starting to Get Policy Id by Name on BIG-IP`); }
+
+
+      var getPolicyList = `https://localhost/mgmt/tm/asm/policies?ver=${ver}`;
+
+      return new Promise (function(resolve,reject) {
+
+        var getPolicyOptions = {
+            url: getPolicyList,
+            method: "GET",
+            rejectUnauthorized: false,
+            auth: bigipCredentials
+          };
+
+        setTimeout(function() {
+
+          request(getPolicyOptions, function (err, response, body) {
+            var bodyResponse = JSON.parse(body);
+
+              if (err) {
+                if (DEBUG) {logger.severe(`Get Policy List Error: ${err}`); }
+                reject(err);
+
+              } else if (response.statusCode !== 200) {
+                if (DEBUG) {logger.severe(`Get Policy Import Error, Received Status code: ${response.statusCode} from BIGIP device:\n${JSON.stringify(bodyResponse)}`); }
+                reject(JSON.stringify(bodyResponse));
+              } else {
+                if (DEBUG) {logger.info(`Get Policy Creation Completed, Received Status code: ${response.statusCode} from BIGIP device: ${bodyResponse.status}`); }
+
+                    for (var i = 0; i < bodyResponse.totalItems; i++) {
+                      if (bodyResponse.items[i].name === policyname) {
+                        resolve(bodyResponse.items[i].id);
+                        break;
+                      }
+                    }
+              }
+          });
+      }, LtimeOut);
+  });
+};
 module.exports = InstallPolicy;
