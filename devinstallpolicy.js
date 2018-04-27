@@ -5,20 +5,21 @@
       bigipCredentials = {'user': username, 'pass': password},
       ver = "13.1.0", //ASM Version
       DEBUG = true,
-      timeOut = 15000,
+      timeOut = 25000,
       LtimeOut = 5000;
 
 
 
 function InstallPolicy() {}
 
-InstallPolicy.prototype.WORKER_URI_PATH = "asm/install_policy";
+//InstallPolicy.prototype.WORKER_URI_PATH = "asm/install_policy";
+InstallPolicy.prototype.WORKER_URI_PATH = "/shared/workers/install_policy";
 InstallPolicy.prototype.isPublic = true;
 InstallPolicy.prototype.onPost = function (restOperation) {
 
-    var athis = this,
-        policySCName = restOperation.getBody().policyvcsname,
-        policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
+    var athis = this;
+        global.policySCName = restOperation.getBody().policyvcsname;
+        global.policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
 
     if (DEBUG) {logger.info(`Starting to Pull Policy from VCS URL: ${policySCName}`); }
 
@@ -32,7 +33,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
       return validatePolicy(result);
     }).then(function(Msg) {
 
-        var responsePostResult = {"policy_vcsame:": policySCName,
+        var responsePostResult = {"policy_vcsame": policySCName,
                                   "policy_id": policyid,
                                   "import_id": importID,
                                   "install_result":Msg
@@ -50,36 +51,33 @@ InstallPolicy.prototype.onPost = function (restOperation) {
     });
 };
 
-// InstallPolicy.prototype.onDelete = function (restOperation) {
-//
-//   var dthis = this,
-//       delPolicyFName = restOperation.getBody().policyname;
-//
-//   if (DEBUG) {logger.info(`Starting to Delete Policy with the policy id: ${delPolicyFName}`); }
-//
-//     getPolicyId(delPolicyFName).then(function(policyid) {
-//       return delPolicy(delPolicyFName).then(function(Msg) {
-//
-//           var responseDeleteResult = { "policy_id": delPolicyFName,
-//                                        "install_result":Msg
-//                                      };
-//
-//           restOperation.setBody(responseDeleteResult);
-//           dthis.completeRestOperation(restOperation);
-//
-//           if (DEBUG) { logger.info("Completed To Delete Policy:\n" + JSON.stringify(responseDeleteResult)); }
-//
-//       }).catch(function(err) {
-//         logger.severe("Error Catch: " + err);
-//         restOperation.setBody(responsePostResult);
-//         dthis.completeRestOperation(restOperation);
-//       });
-//     });
-// };
+InstallPolicy.prototype.onDelete = function (restOperation) {
 
-InstallPolicy.prototype.onDelete = function(restOperation) {
-    this.state = {};
-    this.completeRestOperation(restOperation.setBody(this.state));
+  var dthis = this,
+      delPolicyFName = restOperation.getBody().policyname;
+
+  if (DEBUG) {logger.info(`Starting Delete Policy Event, Policy Name: ${delPolicyFName}`); }
+
+    getPolicyId(delPolicyFName).then(function(result) {
+      return deletePolicy(result).then(function(Msg) {
+
+          if (DEBUG) {logger.info(` Delete Policy Test: ${Msg}`); }
+
+          var responseDeleteResult = { "policy_name_deleted": delPolicyFName,
+                                       "policy_id_deleted": Msg
+                                     };
+
+          restOperation.setBody(responseDeleteResult);
+          dthis.completeRestOperation(restOperation);
+
+          if (DEBUG) { logger.info("Completed To Delete Policy:" + JSON.stringify(responseDeleteResult)); }
+
+      }).catch(function(err) {
+        logger.severe("Error Catch: " + err);
+        restOperation.setBody(responseDeleteResult);
+        dthis.completeRestOperation(restOperation);
+      });
+    });
 };
 
 // function to pull XML policy from source control and save it to memeory as base64 file
@@ -177,14 +175,14 @@ var createPolicy = function(transferResult) {
 
 // Delete Policy Function
 
-var deletePolicy = function(delPolicyFName) {
+var deletePolicy = function(delpolicyid) {
 
-      if (DEBUG) { logger.info(`Starting to Delete Policy Name: ${delPolicyFName}`); }
+      if (DEBUG) { logger.info(`Starting to Delete Policy Name: ${delpolicyid}`); }
 
       return new Promise(function(resolve, reject) {
 
           var DeletePolicyOptions = {
-            url: `https://localhost/mgmt/tm/asm/policies/${delPolicyFName}?ver=${ver}`,
+            url: `https://localhost/mgmt/tm/asm/policies/${delpolicyid}?ver=${ver}`,
             method: "DELETE",
             auth: bigipCredentials,
             rejectUnauthorized: false,
@@ -200,7 +198,7 @@ var deletePolicy = function(delPolicyFName) {
                 logger.severe(`Delete Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body.message}`);
                 resolve(body.message);
               } else {
-                    if (DEBUG) {logger.info(`Delete Policy Completed: Received Status code ${response.statusCode} from BIG-IP`); }
+                    if (DEBUG) {logger.info(`Delete Policy ID ${body.id} Completed: Received Status code ${response.statusCode} from BIG-IP`); }
                     resolve(body.id);
               }
         });
@@ -213,7 +211,7 @@ var deletePolicy = function(delPolicyFName) {
 var importPolicy = function(policyID) {
   if (DEBUG) {logger.info(`Starting to Import Policy into the BIG-IP Created Policy ID: ${policyID} `); }
 
-  var policyid = policyID;
+  global.policyid = policyID;
   var policyRef = `https://localhost/mgmt/tm/asm/policies/${policyID}?ver=${ver}`;
 
   if (!policyID)  {
@@ -257,7 +255,7 @@ var validatePolicy = function(validateIDResponse) {
 
       if (DEBUG) {logger.info(`Starting to Validate Policy Import on BIG-IP`); }
 
-      var importID = validateIDResponse.replace(/^"+|"+$/g, '');
+       global.importID = validateIDResponse.replace(/^"+|"+$/g, '');
       var ValidatePolicyURL = `https://localhost/mgmt/tm/asm/tasks/import-policy/${importID}?ver=${ver}`;
 
       return new Promise (function(resolve,reject) {
@@ -295,7 +293,7 @@ var validatePolicy = function(validateIDResponse) {
 
 var getPolicyId = function(policyname) {
 
-      if (DEBUG) {logger.info(`Starting to Get Policy Id by Name on BIG-IP`); }
+      if (DEBUG) {logger.info(`Starting to Get Policy Id by Name`); }
 
 
       var getPolicyList = `https://localhost/mgmt/tm/asm/policies?ver=${ver}`;
@@ -309,30 +307,34 @@ var getPolicyId = function(policyname) {
             auth: bigipCredentials
           };
 
-        setTimeout(function() {
+//        setTimeout(function() {
 
           request(getPolicyOptions, function (err, response, body) {
             var bodyResponse = JSON.parse(body);
 
               if (err) {
-                if (DEBUG) {logger.severe(`Get Policy List Error: ${err}`); }
+                if (DEBUG) {logger.severe(`Get Policy Name List Error: ${err}`); }
                 reject(err);
 
               } else if (response.statusCode !== 200) {
-                if (DEBUG) {logger.severe(`Get Policy Import Error, Received Status code: ${response.statusCode} from BIGIP device:\n${JSON.stringify(bodyResponse)}`); }
+                if (DEBUG) {logger.severe(`Get Policy Id by Name Error, Received Status code: ${response.statusCode} from BIGIP device:\n${JSON.stringify(bodyResponse)}`); }
                 reject(JSON.stringify(bodyResponse));
               } else {
-                if (DEBUG) {logger.info(`Get Policy Creation Completed, Received Status code: ${response.statusCode} from BIGIP device: ${bodyResponse.status}`); }
+                if (DEBUG) {logger.info(`Get Policy ID by Name, Received Status code: ${response.statusCode}`); }
 
                     for (var i = 0; i < bodyResponse.totalItems; i++) {
                       if (bodyResponse.items[i].name === policyname) {
+                          if (DEBUG) {logger.info(`Get Policy ID by Name: ${policyname} Completed, Policy Id: ${bodyResponse.items[i].id}`); }
                         resolve(bodyResponse.items[i].id);
                         break;
+
+                      } else {
+                        if (DEBUG) {logger.info(`Get Policy ID by Name Result, Policy Name: ${policyname} Already deleted `); }
                       }
                     }
               }
           });
-      }, LtimeOut);
+//      }, LtimeOut);
   });
 };
 module.exports = InstallPolicy;
