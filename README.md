@@ -47,8 +47,8 @@ Delete ASM policy:
 
 What the extension is doing:
 1. Extension get the policy ID from the BIGIP based on the policy name
-2. Extension delete the policy from the BIGIP based on the policy Id
-3. Extension validate the deletion of the policy Id and provide back the results
+2. Extension validate policy Id provided is exist
+3. Extension delete the policy from the BIGIP based on the policy Id and provide back the results
 
 How to Deploy extension: Two options
 
