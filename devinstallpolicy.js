@@ -32,7 +32,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
         var responsePostResult = {"policy_vcsame": policySCName,
                                   "policy_id": policyid,
                                   "import_id": importID,
-                                  "install_result":Msg
+                                  "create_result":Msg
                                 };
 
         restOperation.setBody(responsePostResult);
@@ -42,7 +42,9 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
     }).catch(function(err) {
       logger.severe("Error Catch: " + err);
-      restOperation.setBody(responsePostResult);
+
+      var responseErrPostResult = {"create_error__result":err};
+      restOperation.setBody(responseErrPostResult);
       athis.completeRestOperation(restOperation);
     });
 };
@@ -57,7 +59,9 @@ InstallPolicy.prototype.onDelete = function (restOperation) {
     getPolicyId(delPolicyFName).then(function(result) {
       return deletePolicy(result).then(function(Msg) {
 
-          var responseDeleteResult = { "policy_name_deleted": delPolicyFName };
+          var responseDeleteResult = { "policy_name": delPolicyFName,
+                                       "policy_deleted_id":Msg };
+
           restOperation.setBody(responseDeleteResult);
           dthis.completeRestOperation(restOperation);
 
@@ -65,7 +69,10 @@ InstallPolicy.prototype.onDelete = function (restOperation) {
 
       }).catch(function(err) {
             logger.severe("Error Catch: " + err);
-            restOperation.setBody(responseDeleteResult);
+
+            var responseErrDeleteResult = { "delete_error_result":err };
+
+            restOperation.setBody(responseErrDeleteResult);
             dthis.completeRestOperation(restOperation);
       });
     });
@@ -159,10 +166,10 @@ var createPolicy = function(transferResult) {
               if (DEBUG) {logger.severe("Something went wrong with Create Policy Request:\n" + err); }
               reject(err);
             } else if (response.statusCode !== 201) {
-              logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body.message}`);
-              resolve(body.message);
+              logger.severe(`Create Policy Error: Received Status code: ${response.statusCode} from BIG-IP`);
+              reject(body.message);
             } else {
-                  if (DEBUG) {logger.info(`Create Policy Completed: Received Status code ${response.statusCode} from BIG-IP, policy ID is: ${body.id}`); }
+                  if (DEBUG) {logger.info(`Create Policy Completed: Received Status code ${response.statusCode} from BIG-IP, policy ID is: ${JSON.stringify(body.id)}`); }
                   resolve(body.id);
             }
         });
@@ -187,15 +194,18 @@ var deletePolicy = function(delpolicyid) {
 
         request (DeletePolicyOptions, function(err, response, body) {
 
+            var resDelBody = JSON.parse(body);
+
             if (err) {
               if (DEBUG) {logger.severe("Something went wrong with Delete Policy:\n " + err); }
                 reject(err);
             } else if (response.statusCode !== 201) {
-                logger.severe(`Delete Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body.message}`);
-                resolve(body.message);
+              logger.severe(typeof body)
+                logger.severe(`Delete Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body}`);
+                reject(resDelBody.message);
             } else {
-                  if (DEBUG) {logger.info(`Delete Policy ID ${body.id} Completed: Received Status code ${response.statusCode} from BIG-IP`); }
-                  resolve(body.id);
+                  if (DEBUG) {logger.info(`Delete Policy ID ${resDelBody.id} Completed: Received Status code ${response.statusCode} from BIG-IP`); }
+                  resolve(resDelBody.id);
             }
         });
     });
@@ -208,11 +218,12 @@ var importPolicy = function(policyID) {
 
     if (DEBUG) {logger.info(`Starting importPolicy function. Import Policy into the BIG-IP Created Policy ID: ${policyID} `); }
 
+    //global.policyid = policyID.slice(1,-1);
     global.policyid = policyID;
-    var policyRef = `https://localhost/mgmt/tm/asm/policies/${policyID}?ver=${ver}`;
+    var policyRef = `https://localhost/mgmt/tm/asm/policies/${policyid}?ver=${ver}`;
 
-    if (!policyID)  {
-        if (DEBUG) {logger.severe(`Import Policy Error: No Policy ID return from BIG-IP Policy Creation. Policy Already Created`); }
+    if (!policyid)  {
+        if (DEBUG) {logger.severe(`Import Policy Error: No Policy ID return from BIG-IP Policy Creation. No matching record was found`); }
 
     } else {
 
@@ -332,8 +343,8 @@ var getPolicyId = function(policyname) {
 
                 if (getPolicyFound) {
 
-                  if (DEBUG) {logger.info(`Get Policy ID by Name Result, Policy Name: ${policyname} Already Deleted `); }
-                  resolve(`Get Policy ID by Name Result, Policy Name: ${policyname} Already Deleted`);
+                  if (DEBUG) {logger.info(`Get Policy ID by Name Result, Policy Name: ${policyname}, No matching record was found `); }
+                  resolve(`Get Policy ID by Name Result, Policy Name: ${policyname}, No matching record was found`);
                 }
             }
         });
