@@ -4,7 +4,7 @@ The LX extension will be divided into CRUD operations:
 
 ====================
 
-Install ASM policy:
+CREATE ASM policy:
 
 ====================
 
@@ -15,20 +15,14 @@ What the extension is doing:
 4. Extension import the pulled policy into the new created policy
 5. Extension validate the import policy process and provide back the results
 
-How to Deploy extension: Two options
+How to Deploy extension:
 
-First Option:
-1. Copy "Install Policy" extension code file: "installpolicy.js" from the repository into your BIGIP
-2. Follow the instruction to deploy LX Control extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
-3. Add "request" module to support the extension:
+1. Copy latest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM to ASM /var/config/rest/downloads/" folder
+2. Install RPM package to ASM: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
+# Replace "user:pass" with your ASM credentials
+# Replace "InstallPolicy-0.1.2-0002.noarch.rpm" file name with the latest RPM file name that you downloaded
 
-   a. Login to the BIGIP cli
-   b. Change directory to: '/var/config/rest/iapps/"your_project_name"/'
-   c. Install "request" module by clicking: "npm install request"  
-
-Second Option:
-1. Copy lastest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM
-2. Follow the instruction to deploy RPM iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
+For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 How to Use Extension:
 1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
@@ -37,11 +31,12 @@ How to Use Extension:
 4. Include JSON body type name "policyvcsname" and value, point to the version control URL. see example below:
 { "policyvcsname": "https://raw.githubusercontent.com/nashkenazi/ASM-Templates/master/Sharepoint_2016_Template_6.0_v13.1.0.1.xml" }
 
-==============================================================================================================================================
+=======================================================================================================================================================
+
 
 ====================
 
-Delete ASM policy:
+DELETE ASM policy:
 
 ====================
 
@@ -50,20 +45,14 @@ What the extension is doing:
 2. Extension validate policy Id provided is exist
 3. Extension delete the policy from the BIGIP based on the policy Id and provide back the results
 
-How to Deploy extension: Two options
+How to Deploy extension:
 
-First Option:
-1. Copy "Install Policy" extension code file: "installpolicy.js" from the repository into your BIGIP
-2. Follow the instruction to deploy LX Control extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
-3. Add "request" module to support the extension:
+1. Copy latest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM to ASM /var/config/rest/downloads/" folder
+2. Install RPM package to ASM: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
+# Replace "user:pass" with your ASM credentials
+# Replace "InstallPolicy-0.1.2-0002.noarch.rpm" file name with the latest RPM file name that you downloaded
 
-   a. Login to the BIGIP cli
-   b. Change directory to: '/var/config/rest/iapps/"your_project_name"/'
-   c. Install "request" module by clicking: "npm install request"  
-
-Second Option:
-1. Copy lastest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM
-2. Follow the instruction to deploy RPM iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
+For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 How to Use Extension:
 1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
@@ -72,4 +61,4 @@ How to Use Extension:
 4. Include JSON body type name "policyname" and value, point to the version control URL. see example below:
 { "policyname": "Sharepoint_2016_Template_6.0_v13.1.0.1" }
 
-==============================================================================================================================================
+=========================================================================================================================================================
