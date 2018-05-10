@@ -20,9 +20,9 @@ How to Deploy extension:
 1. Copy latest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM to ASM /var/config/rest/downloads/" folder
 2. Install RPM package to ASM: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
 # Replace "user:pass" with your ASM credentials
-# Replace "InstallPolicy-0.1.2-0002.noarch.rpm" file name with the latest RPM file name that you downloaded
-
 For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
+
+3. Add At least one DNS Resolving Server List: "tmsh modify sys dns name-servers add { 8.8.8.8 }"
 
 How to Use Extension:
 1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
