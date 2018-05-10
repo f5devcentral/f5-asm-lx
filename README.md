@@ -2,11 +2,11 @@ This ASM iControl LX extension repository is intended to improve automation proc
 The LX extension will be divided into CRUD operations:
 
 
-====================
+===========================
 
-CREATE ASM policy:
+CREATE ASM Policy operation:
 
-====================
+===========================
 
 What the extension is doing:
 1. Extension pull the ASM XML policy from version control system
@@ -34,11 +34,11 @@ How to Use Extension:
 =======================================================================================================================================================
 
 
-====================
+============================
 
-DELETE ASM policy:
+DELETE ASM Policy operation:
 
-====================
+============================
 
 What the extension is doing:
 1. Extension get the policy ID from the BIGIP based on the policy name
