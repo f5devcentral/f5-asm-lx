@@ -1,11 +1,11 @@
   var logger = require('f5-logger').getInstance(),
       request = require("../node_modules/request"),
-      username = 'admin',
-      password = 'admin',
-      bigipCredentials = {'user': username, 'pass': password},
+      username = "admin",
+      password = "admin",
+      bigipCredentials = {"user": username, "pass": password},
       ver = "13.1.0", //ASM Version
       DEBUG = true,
-      timeOut = 25000;
+      timeOut = 35000;
 
 function InstallPolicy() {}
 
@@ -78,7 +78,9 @@ InstallPolicy.prototype.onDelete = function (restOperation) {
     });
 };
 
-// function to pull XML policy from source control and save it to memeory as base64 file
+//======================================================================================
+// Pull XML policy from source control and save it to memeory as base64 file
+//======================================================================================
 
 var pullPolicy = function(policySCName) {
   if (DEBUG) { logger.info(`Starting pullPolicy function. Pull Policy ${policySCName} from VCS `); }
@@ -104,8 +106,8 @@ var pullPolicy = function(policySCName) {
 };
 
 // ========================================================
-// function to transfer the policy and upload to ASM device
-// =============================================
+// Transfer the policy and upload to ASM device
+// ========================================================
 
 var transferPolicy = function(Apolicy) {
 
@@ -143,7 +145,9 @@ var transferPolicy = function(Apolicy) {
     });
 };
 
-// function to create new ASM policy based on the imported file name
+//====================================================================
+// Create new ASM policy based on the imported file name
+//====================================================================
 
 var createPolicy = function(transferResult) {
 
@@ -176,7 +180,9 @@ var createPolicy = function(transferResult) {
     });
 };
 
-// Delete Policy Function
+//===================================
+// Delete Policy based on policy name
+//===================================
 
 var deletePolicy = function(delpolicyid) {
 
@@ -200,7 +206,7 @@ var deletePolicy = function(delpolicyid) {
               if (DEBUG) {logger.severe("Something went wrong with Delete Policy:\n " + err); }
                 reject(err);
             } else if (response.statusCode !== 201) {
-              logger.severe(typeof body)
+
                 logger.severe(`Delete Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body}`);
                 reject(resDelBody.message);
             } else {
@@ -211,8 +217,9 @@ var deletePolicy = function(delpolicyid) {
     });
 };
 
-
-// function to import the imported policy into the new policy that just created
+//================================================================================
+// Import the policy into the new policy that just created
+//================================================================================
 
 var importPolicy = function(policyID) {
 
@@ -258,7 +265,9 @@ var importPolicy = function(policyID) {
     }
 };
 
-// function to validate the import result and response it back to the caller
+//==========================================================================
+// Validate import result and response it back to the caller
+//==========================================================================
 
 var validatePolicy = function(validateIDResponse) {
 
