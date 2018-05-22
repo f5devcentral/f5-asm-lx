@@ -29,8 +29,9 @@ How to Use The Extension:
 2. Create POST call to the extension URL "your_ASM_Address"/mgmt/shared/workers/install_policy"
 3. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxxx"
 4. Include JSON body type name "policyvcsname" and value, point to the version control URL. see example below:
-{ "policyvcsname": "https://raw.githubusercontent.com/nashkenazi/ASM-Templates/master/Sharepoint_2016_Template_6.0_v13.1.0.1.xml" }
+{ "policyvcsname": "https://github.com/f5devcentral/f5-asm-policy-template-v13/raw/master/F5-ASM-GIT-Policy.xml" }
 
+See more information and example in "ASM LX.postman_collection.json"
 =======================================================================================================================================================
 
 
@@ -57,6 +58,7 @@ How to Use The Extension:
 2. Create DELETE call to the extension URL "your_ASM_Address"/mgmt/shared/workers//install_policy"
 3. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxxx"
 4. Include JSON body type name "policyname" and value, point to the version control URL. see example below:
-{ "policyname": "Sharepoint_2016_Template_6.0_v13.1.0.1" }
+{ "policyname": "F5-ASM-GIT-Policy" }
 
+See more information and example in "ASM LX.postman_collection.json"
 =========================================================================================================================================================
