@@ -17,7 +17,7 @@ What the extension is doing:
 5. Extension validate the import policy process and report back the results
 
 How to Deploy the Extension:
-1. Copy latest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM to ASM /var/config/rest/downloads/" folder
+1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/InstallPolicy-0.1.2-0002.noarch.rpm to ASM /var/config/rest/downloads/" folder
 2. Install RPM package to ASM: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
 
 Replace "user:pass" with your ASM credentials
@@ -47,7 +47,7 @@ What the extension is doing:
 3. Extension delete the policy from the ASM based on the policy Id and report back the results
 
 How to Deploy The Extension:
-1. Copy latest RPM package from https://github.com/nashkenazi/LX-ASM/tree/master/RPM to ASM /var/config/rest/downloads/" folder
+1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/InstallPolicy-0.1.2-0002.noarch.rpm to ASM /var/config/rest/downloads/" folder
 2. Install RPM package to ASM: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
 
 Replace "user:pass" with your ASM credentials
