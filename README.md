@@ -16,6 +16,7 @@ What the extension is doing:
 4. Extension import the downloaded policy into the new created policy
 5. Extension validate the import policy process and report back the results
 
+
 How to Deploy the Extension:
 1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/InstallPolicy-0.1.2-0002.noarch.rpm to your ASM folder "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm" 
 2. Install RPM package on ASM via the ASM CLI command: 
@@ -27,6 +28,7 @@ curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-managem
 3. Add At least one DNS Resolving Server List on ASM: "tmsh modify sys dns name-servers add { 8.8.8.8 }"
 
 
+
 How to Use The Extension:
 1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
 2. Create POST call to the extension URL "your_ASM_Address"/mgmt/shared/workers/install_policy"
@@ -35,6 +37,7 @@ How to Use The Extension:
 { "policyvcsname": "https://github.com/f5devcentral/f5-asm-policy-template-v13/raw/master/F5-ASM-GIT-Policy.xml" }
 
 See more information and example in "ASM LX.postman_collection.json"
+
 =======================================================================================================================================================
 
 
@@ -64,4 +67,5 @@ How to Use The Extension:
 { "policyname": "F5-ASM-GIT-Policy" }
 
 See more information and example in "ASM LX.postman_collection.json"
+
 =========================================================================================================================================================
