@@ -21,8 +21,8 @@ How to Deploy the Extension:
 2. Install RPM package on ASM via the ASM CLI command: 
 curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
 
-- Replace "user:pass" with your ASM credentials
-For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
+    - Replace "user:pass" with your ASM credentials
+      For More Information, Follow iControl extension:                      https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 3. Add At least one DNS Resolving Server List on ASM: "tmsh modify sys dns name-servers add { 8.8.8.8 }"
 
