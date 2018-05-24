@@ -17,14 +17,15 @@ What the extension is doing:
 5. Extension validate the import policy process and report back the results
 
 How to Deploy the Extension:
-1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/InstallPolicy-0.1.2-0002.noarch.rpm to ASM /var/config/rest/downloads/" folder
-2. Install RPM package to ASM: 
+1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/InstallPolicy-0.1.2-0002.noarch.rpm to your ASM folder "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm" 
+2. Install RPM package on ASM via the ASM CLI command: 
 curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.2-0002.noarch.rpm"}'
-- Replace "user:pass" with your ASM credentials
 
+- Replace "user:pass" with your ASM credentials
 For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 3. Add At least one DNS Resolving Server List on ASM: "tmsh modify sys dns name-servers add { 8.8.8.8 }"
+
 
 How to Use The Extension:
 1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
