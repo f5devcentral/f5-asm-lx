@@ -15,7 +15,7 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 
     var athis = this;
     global.policySCName = restOperation.getBody().policyvcsname;
-    global.policyFName = policySCName.slice(policySCName.lastIndexOf("/")+1,-4);
+    global.policyName = restOperation.getBody().policyname;
 
     if (DEBUG) {logger.info(`Starting Post Policy Event. VCS URL: ${policySCName}`); }
 
@@ -52,14 +52,14 @@ InstallPolicy.prototype.onPost = function (restOperation) {
 InstallPolicy.prototype.onDelete = function (restOperation) {
 
   var dthis = this,
-      delPolicyFName = restOperation.getBody().policyname;
+      delPolicyName = restOperation.getBody().policyname;
 
-  if (DEBUG) {logger.info(`Starting Delete Policy Event. Policy Name: ${delPolicyFName}`); }
+  if (DEBUG) {logger.info(`Starting Delete Policy Event. Policy Name: ${delPolicyName}`); }
 
-    getPolicyId(delPolicyFName).then(function(result) {
+    getPolicyId(delPolicyName).then(function(result) {
       return deletePolicy(result).then(function(Msg) {
 
-          var responseDeleteResult = { "policy_name": delPolicyFName,
+          var responseDeleteResult = { "policy_name": delPolicyName,
                                        "policy_deleted_id":Msg };
 
           restOperation.setBody(responseDeleteResult);
@@ -111,12 +111,12 @@ var pullPolicy = function(policySCName) {
 
 var transferPolicy = function(Apolicy) {
 
-    if (DEBUG) { logger.info(`Starting transferPolicy function. Transfer Policy: ${policyFName} to BIG-IP`); }
+    if (DEBUG) { logger.info(`Starting transferPolicy function. Transfer Policy: ${policyName} to BIG-IP`); }
 
     return new Promise (function(resolve,reject) {
 
         var newContentRange = "0-" + (Number(Apolicy[1]) + 1) + "/" + (Number(Apolicy[1]) + 1);
-        var TransferPolicyURL = `https://localhost/mgmt/tm/asm/file-transfer/uploads/${policyFName}?ver=${ver}`;
+        var TransferPolicyURL = `https://localhost/mgmt/tm/asm/file-transfer/uploads/${policyName}?ver=${ver}`;
 
         var TransferPolicyOptions = {
             url: TransferPolicyURL,
@@ -151,7 +151,7 @@ var transferPolicy = function(Apolicy) {
 
 var createPolicy = function(transferResult) {
 
-    if (DEBUG) { logger.info(`Starting createPolicy function. Create Policy Name: ${policyFName}`); }
+    if (DEBUG) { logger.info(`Starting createPolicy function. Create Policy Name: ${policyName}`); }
 
     return new Promise(function(resolve, reject) {
 
@@ -161,7 +161,7 @@ var createPolicy = function(transferResult) {
             auth: bigipCredentials,
             rejectUnauthorized: false,
             headers: { "Content-type": "application/json" },
-            json: {"name": policyFName}
+            json: {"name": policyName}
           };
 
         request (CreatePolicyOptions, function(err, response, body) {
@@ -243,7 +243,7 @@ var importPolicy = function(policyID) {
                 rejectUnauthorized: false,
                 headers: { "content-type": "application/json" },
                 json: {
-                    "filename": policyFName,
+                    "filename": policyName,
                     "policyReference": { "link": policyRef }
                 }
             };
