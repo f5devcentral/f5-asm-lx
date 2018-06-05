@@ -348,9 +348,6 @@ var getPolicyId = function(policyname) {
     logger.info(`Starting getPolicyId function. Get Policy Id by Name: ${policyname} `);
   }
 
-  var getPolicyFound = true;
-  var getPolicyList = `https://localhost/mgmt/tm/asm/policies?ver=${ver}`;
-
   return new Promise(function(resolve, reject) {
     // Create the algorithm.
     const algo = crypto.createHash('md5');
