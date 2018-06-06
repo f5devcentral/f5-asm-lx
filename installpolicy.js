@@ -3,7 +3,7 @@
       username = "admin",
       password = "admin",
       bigipCredentials = {"user": username, "pass": password},
-      ver = "13.1.0", //ASM Version
+      ver = "13.1.0", //ASM Curr Version
       DEBUG = true,
       timeOut = 35000;
 
