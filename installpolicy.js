@@ -359,4 +359,18 @@ var getPolicyId = function(policyname) {
         });
     });
 };
+          request (DownloadPolicyOptions, function(err, response, body) {
+
+              if (err) {
+                if (DEBUG) {logger.severe("Something went wrong with Download Policy:\n " + err); }
+                  reject(err);
+              } else if (response.statusCode !== 200) {
+
+                  logger.severe(`Download Policy Error: Received Status code: ${response.statusCode} from BIG-IP:\n${body}`);
+                  reject(body.message);
+              } else {
+                    if (DEBUG) {logger.info(`Download Policy ID ${body} Completed: Received Status code ${response.statusCode} from BIG-IP`); }
+                    resolve(body.id);
+              }
+          });
 module.exports = InstallPolicy;
