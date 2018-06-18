@@ -26,12 +26,18 @@ For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/
 
 
 How to Use The Extension:
-1. Edit extension default const variables to your environment: "username", "password", "ver", "DEBUG"
+1. Edit extension default  variables to your environment:
+
+"username" - ASM user name
+"password" - ASM user password
+"ver" - ASM software Version
+"DEBUG" - Enable or disable ASM logs - "true"  or "false"
+
 2. Create POST call to the extension URL "ASM_IP_Address"/mgmt/shared/workers/install_policy"
 3. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic XXXXXXX"
 4. Include parameter "policyvcsname" point the VCS policy URL and parameter "policyname" that the policy name will be.
 
-see example below:
+See example below:
 
 curl --insecure -d '{ "policyvcsname": "https://github.com/f5devcentral/f5-asm-policy-template-v13/raw/master/F5-ASM-GIT-Policy.xml", "policyname": "Declarative_API_Policy" }' -H "Content-Type: application/json" -H "Authorization: Basic XXXXXXXXX" -X POST https://ASM_IP_ADDRESS/mgmt/shared/workers/install_policy
 
