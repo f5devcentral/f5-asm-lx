@@ -1,20 +1,20 @@
 var logger = require('f5-logger').getInstance(),
     request = require("../node_modules/request"),
     md5 = require("../node_modules/md5"),
-    username = "admin",
-    password = "admin",
-    vcsusername = "nashkenazi",
-    vcspassword = "GoToHell@20",
-    vcsrepo = "LX-ASM",
-    vcspath = "BCK",
+    username = "asmusername",
+    password = "asmuserpassword",
+    vcsusername = "vcsusername",
+    vcspassword = "vcspassword",
+    vcsrepo = "vcsreponame",
+    vcspath = "vcsrepofolder",
     bigipCredentials = {"user": username, "pass": password},
     vcsCredentials = {"username": vcsusername, "password": vcspassword},
     ver = "13.1.0", //ASM Curr Version
     vcsuploadpath = `api.github.com/repos/${vcsusername}/${vcsrepo}/contents/${vcspath}/`,
 
-    DEBUG = true,
-    etimeOut = 3000,
-    vtimeOut = 30000;
+    DEBUG = false,
+    etimeOut = 4000,
+    vtimeOut = 35000;
 
 function InstallPolicy() {}
 
@@ -499,7 +499,7 @@ var expValidatePolicy = function(expvalidateIDResponse) {
 };
 
 //==============================================================================
-// Download Policy - Transfer file to External Resource
+// Download Policy - Download policy to local folder
 //==============================================================================
 
 var downloadPolicy = function(exppolicyid) {
@@ -574,6 +574,5 @@ var uploadPolicy = function(policyfile) {
         });
     });
 };
-
 
 module.exports = InstallPolicy;
