@@ -1,6 +1,6 @@
 ==================================
 
-#Opt-Policy
+# Opt-Policy
 
 ==================================
 
@@ -12,7 +12,7 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 
 ==================================
 
-##How to Deploy the Extension on ASM
+## How to Deploy the Extension on ASM
 
 ==================================
 
@@ -29,7 +29,7 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 curl -u _\<user:pass\>_ -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
 "_/var/config/rest/downloads/\<rpm file\>_"}'
 
-- Replace "user:pass" with the ASM credentials
+- Replace \<user:pass\> with the ASM credentials
 - Replace \<rpm file\> with the latest rpm file
 For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
@@ -37,17 +37,17 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 - Open the extension folder "_/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js_" and edit the following variables to your environment:
 
-    bigipusername = "replace with bigip username",
-    bigippassword = "replace with bigip password",
-    vcsusername = "replace with vcs username",
-    vcspassword = "replace with vcs password",
-    vcsemail = "replace with vcs email",
-    vcsrepo = "replace with vcs repo name",
-    vcspath = "replace with vcs path name",
-    bigipCredentials = {"user": bigipusername, "pass": bigippassword},
-    vcsCredentials = {"username": vcsusername, "password": vcspassword},
-    bigipver = "replace with bigip version",
-    DEBUG = false;
+    bigipusername = "replace with bigip username"\r\n
+    bigippassword = "replace with bigip password"\r\n
+    vcsusername = "replace with vcs username"\r\n
+    vcspassword = "replace with vcs password"\r\n
+    vcsemail = "replace with vcs email"\r\n
+    vcsrepo = "replace with vcs repo name"\r\n
+    vcspath = "replace with vcs path name"\r\n
+    bigipCredentials = {"user": bigipusername, "pass": bigippassword}\r\n
+    vcsCredentials = {"username": vcsusername, "password": vcspassword}\r\n
+    bigipver = "replace with bigip version"\r\n
+    DEBUG = false\r\n
 
 4. Add At least one DNS Resolving Server List on ASM:
 - "tmsh modify sys dns name-servers add { x.x.x.x }"
@@ -65,11 +65,11 @@ What the extension is doing:
 4. Extension validate the import policy process and report back the results
 
 
-How to Use The Extension:
-2. Create POST call to the extension URL "https://<bigipaddress>/mgmt/shared/workers/opt-policy"
-3. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
-4. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
-5. For Child policy type - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be import or exist before importing child policy)
+How to Use The Extension:\r\n
+1. Create POST call to the extension URL "https://<bigipaddress>/mgmt/shared/workers/opt-policy"
+2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
+3. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
+4. For Child policy type - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be import or exist before importing child policy)
 
 See import example below:
 
