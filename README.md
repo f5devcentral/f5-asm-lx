@@ -37,24 +37,22 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 - Open the extension folder "_/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js_" and edit the following variables to your environment:
 
-    bigipusername = "replace with bigip username"\r\n
-    bigippassword = "replace with bigip password"\r\n
-    vcsusername = "replace with vcs username"\r\n
-    vcspassword = "replace with vcs password"\r\n
-    vcsemail = "replace with vcs email"\r\n
-    vcsrepo = "replace with vcs repo name"\r\n
-    vcspath = "replace with vcs path name"\r\n
-    bigipCredentials = {"user": bigipusername, "pass": bigippassword}\r\n
-    vcsCredentials = {"username": vcsusername, "password": vcspassword}\r\n
-    bigipver = "replace with bigip version"\r\n
-    DEBUG = false\r\n
+    bigipusername = "replace with bigip username"
+    bigippassword = "replace with bigip password"
+    vcsusername = "replace with vcs username"
+    vcspassword = "replace with vcs password"
+    vcsemail = "replace with vcs email"
+    vcsrepo = "replace with vcs repo name"
+    vcspath = "replace with vcs path name"
+    bigipver = "replace with bigip version"
+    DEBUG = false
 
 4. Add At least one DNS Resolving Server List on ASM:
 - "tmsh modify sys dns name-servers add { x.x.x.x }"
 
 ======================================
 
-IMPORT ASM POLICY:
+# IMPORT ASM POLICY:
 
 ======================================
 
@@ -89,7 +87,7 @@ curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policynam
 
 ======================================
 
-EXPORT ASM POLICY:
+# EXPORT ASM POLICY:
 
 ======================================
 
@@ -113,7 +111,7 @@ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgm
 
 ====================================
 
-DELETE ASM POLICY:
+# DELETE ASM POLICY:
 
 ====================================
 
@@ -133,5 +131,3 @@ curl --insecure -d '{ "policyname": "<policy name>" }' -H "Content-Type: applica
 
 - Replace "<bigipaddress>" with ASM mgmt IP and "<auth_hash>" with user basic authorization string
 - Replace "<policy name>" with the ASM policy name that will be exported to the VCS
-
-=========================================================================================================================================================
