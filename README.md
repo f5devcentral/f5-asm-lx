@@ -25,10 +25,10 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 2. Install RPM package
 
 - Install the extension on ASM via ASM CLI command:
-
-curl -u _\<user:pass\>_ -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
+```sh
+$ curl -u _\<user:pass\>_ -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
 "_/var/config/rest/downloads/\<rpm file\>_"}'
-
+```
 - Replace \<user:pass\> with the ASM credentials
 - Replace \<rpm file\> with the latest rpm file
 For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
@@ -36,8 +36,8 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 3. Set environment variables:
 
 - Open the extension folder "_/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js_" and edit the following variables to your environment:
-
-    bigipusername = "replace with bigip username"\n
+```sh
+    bigipusername = "replace with bigip username"
     bigippassword = "replace with bigip password"
     vcsusername = "replace with vcs username"
     vcspassword = "replace with vcs password"
@@ -46,9 +46,12 @@ For More Information, Follow iControl deployment extension guide: https://devcen
     vcspath = "replace with vcs path name"
     bigipver = "replace with bigip version"
     DEBUG = false
-
+  ```
 4. Add At least one DNS Resolving Server List on ASM:
-- "tmsh modify sys dns name-servers add { x.x.x.x }"
+
+```sh
+  $ tmsh modify sys dns name-servers add { x.x.x.x }
+```
 
 ======================================
 
@@ -63,7 +66,7 @@ What the extension is doing:
 4. Extension validate the import policy process and report back the results
 
 
-How to Use The Extension:\r\n
+How to Use The Extension:
 1. Create POST call to the extension URL "https://<bigipaddress>/mgmt/shared/workers/opt-policy"
 2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
 3. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
