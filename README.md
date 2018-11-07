@@ -37,7 +37,7 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 - Open the extension folder "_/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js_" and edit the following variables to your environment:
 
-    bigipusername = "replace with bigip username"
+    bigipusername = "replace with bigip username"\n
     bigippassword = "replace with bigip password"
     vcsusername = "replace with vcs username"
     vcspassword = "replace with vcs password"
@@ -52,7 +52,7 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 ======================================
 
-# IMPORT ASM POLICY:
+## IMPORT ASM POLICY:
 
 ======================================
 
@@ -87,7 +87,7 @@ curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policynam
 
 ======================================
 
-# EXPORT ASM POLICY:
+## EXPORT ASM POLICY:
 
 ======================================
 
@@ -111,7 +111,7 @@ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgm
 
 ====================================
 
-# DELETE ASM POLICY:
+## DELETE ASM POLICY:
 
 ====================================
 
