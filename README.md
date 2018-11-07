@@ -3,8 +3,10 @@
 # Opt-Policy
 
 ==================================
+
 This ASM iControl LX extension repository is intended to improve automation process by using declarative API operations.
 The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE ASM policy from VCS (version control system) in simple API call.
+
 ==================================
 
 ## How to Deploy the Extension on ASM
@@ -44,10 +46,10 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
     bigipver = "replace with bigip version"
     DEBUG = false
   ```
-4. Add At least one DNS Resolving Server List on ASM:
+4. Add at least one DNS Resolving Server List on ASM:
 
 ```sh
-  $ tmsh modify sys dns name-servers add { x.x.x.x }
+  $ tmsh modify sys dns name-servers add { x.x.x.x }```
 
 ======================================
 
