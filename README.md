@@ -106,7 +106,7 @@ see example below:
 
 curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgmt/shared/workers/opt-policy?policy=<policy name>
 
-- Replace <bigip address> with ASM mgmt IP and <auth_hash> with user basic authorization string
+- Replace "bigipaddress" with ASM mgmt IP and <auth_hash> with user basic authorization string
 - Replace <policy name> with the ASM policy name that will be exported to the VCS
 
 
