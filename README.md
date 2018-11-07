@@ -15,9 +15,9 @@ What the extension is doing:
 
 How to Deploy the Extension:
 1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/ to your ASM folder.
-e.g: "/var/config/rest/downloads/InstallPolicy-0.1.4-0004.noarch.rpm"
+e.g: "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"
 2. Install RPM package on ASM via the ASM CLI command:
-e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.4-0004.noarch.rpm"}'
+e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"}'
 
 - Replace "user:pass" with your ASM credentials
 For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx   
@@ -28,21 +28,26 @@ For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/
 How to Use The Extension:
 1. Edit extension default  variables to your environment:
 
-"username" - ASM user name
-"password" - ASM user password
-"ver" - ASM software Version
-"DEBUG" - Enable or disable ASM logs - "true"  or "false"
+"bigipusername" - ASM user name
+"bippassword" - ASM user password
+"bipipver" - ASM software Version
+"DEBUG" - [true/false] Enable or disable ASM logs - logs are accessible via /var/log/restnoded/restnoded.log
 
-2. Create POST call to the extension URL "ASM_IP_Address"/mgmt/shared/workers/install_policy"
+2. Create POST call to the extension URL "https://ASM_IP_Address"/mgmt/shared/workers/opt-policy"
 3. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic XXXXXXX"
 4. Include parameter "policyvcsname" point the VCS policy URL and parameter "policyname" that the policy name will be.
+5. For Child policy type - add additional parameter "policyparentname" that refer to the parent policy name
 
-See example below:
+See import example below:
 
-curl --insecure -d '{ "policyvcsname": "https://github.com/f5devcentral/f5-asm-policy-template-v13/raw/master/F5-ASM-GIT-Policy.xml", "policyname": "Declarative_API_Policy" }' -H "Content-Type: application/json" -H "Authorization: Basic XXXXXXXXX" -X POST https://ASM_IP_ADDRESS/mgmt/shared/workers/install_policy
+1. Security Policy With No Child:
+curl --insecure -d '{ "policyvcsname": "<https://URL to policy XML>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>=" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 
-- Replace "ASM_IP_ADDRESS" with ASM mgmt IP and "XXXXXXX" with user basic authorization string
-For more information and example about the request call, visit "ASM LX.postman_collection_v2.json"
+2. Parent Policy:
+curl --insecure -d '{ "policyvcsname": "<https://URL to policy XML>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>=" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+
+3. Security Policy Child With Parent:
+curl --insecure -d '{ "policyvcsname": "<https://URL to policy XML>", "policyname": "<policy name>", "policyparentname": "< parent policy name>-" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>=" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 
 =======================================================================================================================================================
 
@@ -61,9 +66,9 @@ What the extension is doing:
 
 How to Deploy the Extension:
 1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/ to your ASM folder.
-e.g: "/var/config/rest/downloads/InstallPolicy-0.1.4-0004.noarch.rpm"
+e.g: "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"
 2. Install RPM package on ASM via the ASM CLI command:
-e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.4-0004.noarch.rpm"}'
+e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"}'
 
 - Replace "user:pass" with your ASM credentials
 For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx   
@@ -73,23 +78,23 @@ For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/
 How to Use The Extension:
 1. Edit extension default  variables to your environment:
 
-"username" - ASM user name
-"password" - ASM user password
-"ver" - ASM software Version
-"DEBUG" - Enable or disable ASM logs - "true"  or "false"
+"bigipusername" - ASM user name
+"bigippassword" - ASM user password
+"bigipver" - ASM software Version
+"DEBUG" - [true/false] Enable or disable ASM logs - logs are accessible via /var/log/restnoded/restnoded.log
 vcsusername - VCS user name that the policy will be uploaded
 vcspassword - VCS user password that the policy will be uploaded
 vcsrepo - VCS repository that the policy will be uploaded
 vcspath - VCS repository folder that the policy will be uploaded
 
-2. Create GET call to the extension URL "ASM_IP_Address"/mgmt/shared/workers/install_policy"
+2. Create GET call to the extension URL "ASM_IP_Address"/mgmt/shared/workers/git-policy"
 4. Include URL parameter name"policy" and value equal the policy name that will be uploaded to the VCS.
 
 see example below:
 
-curl --insecure -H "Authorization: Basic YWRtaW46YWRtaW4=" https://ASM_IP_ADDRESS/mgmt/shared/workers/install_policy?policy=ASM_POLICY_NAME
+curl --insecure -H "Authorization: Basic <xxxxxxxxx> =" https://ASM_IP_ADDRESS/mgmt/shared/workers/opt-policy?policy=ASM_POLICY_NAME
 
-- Replace "ASM_IP_ADDRESS" with ASM mgmt IP and "XXXXXXX" with user basic authorization string
+- Replace "ASM_IP_ADDRESS" with ASM mgmt IP and "xxxxxxxx" with user basic authorization string
 - Replace "ASM_POLICY_NAME" with the policy name that would be exported to the VCS
 
 =========================================================================================================================================================
@@ -107,26 +112,27 @@ What the extension is doing:
 
 How to Deploy The Extension:
 1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/ to your ASM folder.
-e.g: "/var/config/rest/downloads/InstallPolicy-0.1.4-0004.noarch.rpm"
+e.g: "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"
 2. Install RPM package on ASM via the ASM CLI command:
-e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/InstallPolicy-0.1.4-0004.noarch.rpm"}'
+e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"}'
+
 
 - Replace "user:pass" with your ASM credentials
 For More Information, Follow iControl extension: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 How to Use The Extension:
 1. Edit extension default variables to your environment:
-"username" - ASM user name
-"password" - ASM user password
-"ver" - ASM software Version
+"bigipusername" - ASM user name
+"bigippassword" - ASM user password
+"bigver" - ASM software Version
 "DEBUG" - Enable or disable ASM logs - "true"  or "false"
 
-2. Create DELETE call to the extension URL "your_ASM_Address"/mgmt/shared/workers//install_policy"
+2. Create DELETE call to the extension URL "https:<bigip_address>"/mgmt/shared/workers//opt-policy"
 3. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxxx"
 4. Include body parameter name "policyname" and the policy name as value.
 
 see example below:
-curl --insecure -d '{ "policyname": "Declarative_API_Policy" }' -H "Content-Type: application/json" -H "Authorization: Basic xxxxxxx" -X DELETE https://ASM_IP_ADDRESS/mgmt/shared/workers/install_policy
+curl --insecure -d '{ "policyname": "Declarative_API_Policy" }' -H "Content-Type: application/json" -H "Authorization: Basic xxxxxxx" -X DELETE https://ASM_IP_ADDRESS/mgmt/shared/workers/opt-policy
 
 - Replace "ASM_IP_ADDRESS" with ASM mgmt IP and "XXXXXXX" with user basic authorization string
 For more information and example about the request call, visit "ASM LX.postman_collection_v2.json"
