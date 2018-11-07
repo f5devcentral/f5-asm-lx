@@ -1,6 +1,6 @@
 ==================================
 
-Opt-Policy
+#Opt-Policy
 
 ==================================
 
@@ -12,29 +12,30 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 
 ==================================
 
-How to Deploy the Extension on ASM
+##How to Deploy the Extension on ASM
 
 ==================================
 
 
 1. Copy latest RPM package:
 
-  - Copy extension package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/ folder to ASM folder:
-   "/var/config/rest/downloads/"
+  - Copy extension package from _https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/_ folder to ASM folder:
+   _"/var/config/rest/downloads/"_
 
 2. Install RPM package
 
 - Install the extension on ASM via ASM CLI command:
 
-e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
-"/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"}'
+curl -u _\<user:pass\>_ -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
+"_/var/config/rest/downloads/\<rpm file\>_"}'
 
 - Replace "user:pass" with the ASM credentials
+- Replace \<rpm file\> with the latest rpm file
 For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 3. Set environment variables:
 
-- Open the extension folder "/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js" and edit the following variables to your environment:
+- Open the extension folder "_/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js_" and edit the following variables to your environment:
 
     bigipusername = "replace with bigip username",
     bigippassword = "replace with bigip password",
@@ -81,8 +82,8 @@ curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XMLL>", "policyna
 3. Security Policy Child With Parent:
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 
-- Replace "<bigipaddress>" with ASM mgmt IP and "<auth_hash>" with user basic authorization string
-- Replace "<policy name>" with the ASM policy name that will be exported to the VCS
+- Replace "bigipaddress" with ASM mgmt IP and "<auth_hash>" with user basic authorization string
+- Replace "policy name" with the ASM policy name that will be exported to the VCS
 - Replace "<parent policy name>" with the ASM policy name that will be exported to the VCS
 
 
