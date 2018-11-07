@@ -4,8 +4,10 @@ Opt-Policy
 
 ==================================
 
+
 This ASM iControl LX extension repository is intended to improve automation process by using declarative API operations.
 The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE ASM policy from VCS (version control system) in simple API call.
+
 
 
 ==================================
@@ -22,11 +24,13 @@ How to Deploy the Extension on ASM
 
 2. Install RPM package
 
-- Install the extenstion on ASM via ASM CLI command:
-  e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath": "/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"}'
+- Install the extension on ASM via ASM CLI command:
+
+e.g: curl -u user:pass -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
+"/var/config/rest/downloads/OptPolicy-0.1-001.noarch.rpm"}'
 
 - Replace "user:pass" with the ASM credentials
-  For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
+For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 3. Set environment variables:
 
@@ -45,7 +49,7 @@ How to Deploy the Extension on ASM
     DEBUG = false;
 
 4. Add At least one DNS Resolving Server List on ASM:
-- "tmsh modify sys dns name-servers add { 8.8.8.8 }"
+- "tmsh modify sys dns name-servers add { x.x.x.x }"
 
 ======================================
 
