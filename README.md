@@ -3,16 +3,15 @@ The LX extension intended to provide IMPORT/EXPORT/DELETE ASM policy from VCS (v
 
 ===========================
 
-CREATE ASM POLICY:
+IMPORT ASM POLICY:
 
 ===========================
 
 What the extension is doing:
 1. Extension download the ASM XML policy from version control system (VCS) based on the parameter "policyvcsname" passed in the request
 2. Extension transfer the VCS downloaded policy to ASM folder
-3. Extension create new ASM policy and name it based on the parameter "policyname" passed in the request
-4. Extension import the downloaded policy into the new created policy
-5. Extension validate the import policy process and report back the results
+3. Extension import the downloaded policy and name it as describe in the "policyname" parameter passed in the request
+4. Extension validate the import policy process and report back the results
 
 How to Deploy the Extension:
 1. Copy latest RPM package from https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/ to your ASM folder.

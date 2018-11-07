@@ -16,7 +16,7 @@ var logger = require('f5-logger').getInstance(),
 
 function optPolicy() {}
 
-optPolicy.prototype.WORKER_URI_PATH = "/shared/workers/install-policy";
+optPolicy.prototype.WORKER_URI_PATH = "/shared/workers/opt-policy";
 optPolicy.prototype.isPublic = true;
 
 
@@ -210,13 +210,16 @@ var importPolicy = function(impolicyId) {
 
 
     if (DEBUG) {logger.info(`Starting importPolicy function. Import Policy into the BIG-IP Created Policy Name: ${impolicyId[0]} `); }
-    var ImportPolicyOptions;
+
+
 
     return new Promise (function(resolve, reject) {
 
+        //var ImportPolicyOptions;
+
         if (impolicyId[1] === "none") {
 
-          var ImportPolicyOptions = {
+           ImportPolicyOptions = {
               url: "https://localhost/mgmt/tm/asm/tasks/import-policy",
               method: "POST",
               auth: bigipCredentials,
@@ -225,24 +228,24 @@ var importPolicy = function(impolicyId) {
               json: {
                   "filename": impolicyId[0],
                   "name": impolicyId[0]
-                 }
-              };
+                  }
+            };
 
         } else {
 
-        var parentRef = `https://localhost/mgmt/tm/asm/policies/${impolicyId[1]}`;
+            var parentRef = `https://localhost/mgmt/tm/asm/policies/${impolicyId[1]}`;
 
-        var ImportPolicyOptions = {
-            url: "https://localhost/mgmt/tm/asm/tasks/import-policy",
-            method: "POST",
-            auth: bigipCredentials,
-            rejectUnauthorized: false,
-            headers: { "content-type": "application/json" },
-            json: {
-                "filename": impolicyId[0],
-                "name": impolicyId[0],
-                "parentPolicyReference": { "link": `https://localhost/mgmt/tm/asm/policies/${impolicyId[1]}` }
-               }
+             ImportPolicyOptions = {
+                url: "https://localhost/mgmt/tm/asm/tasks/import-policy",
+                method: "POST",
+                auth: bigipCredentials,
+                rejectUnauthorized: false,
+                headers: { "content-type": "application/json" },
+                json: {
+                    "filename": impolicyId[0],
+                    "name": impolicyId[0],
+                    "parentPolicyReference": { "link": `https://localhost/mgmt/tm/asm/policies/${impolicyId[1]}` }
+                   }
             };
         }
 
@@ -537,7 +540,7 @@ var uploadPolicy = function(policyfile) {
 
   var updataPolicy = Buffer.from(policyfile).toString("base64");
   var vcsuploadpath = `api.github.com/repos/${vcsusername}/${vcsrepo}/contents/${vcspath}/`;
-  var d = new Date,
+  var d = new Date(),
     dformat = [d.getMonth()+1,
                d.getDate(),
                d.getFullYear()].join('-')+'-'+
