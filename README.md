@@ -1,13 +1,18 @@
+==================================
 
 Opt-Policy
+
+==================================
 
 This ASM iControl LX extension repository is intended to improve automation process by using declarative API operations.
 The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE ASM policy from VCS (version control system) in simple API call.
 
 
-=======================================================
+==================================
+
 How to Deploy the Extension on ASM
-=======================================================
+
+==================================
 
 
 1. Copy latest RPM package:
@@ -42,9 +47,11 @@ How to Deploy the Extension on ASM
 4. Add At least one DNS Resolving Server List on ASM:
 - "tmsh modify sys dns name-servers add { 8.8.8.8 }"
 
-======================================================
+======================================
+
 IMPORT ASM POLICY:
-======================================================
+
+======================================
 
 What the extension is doing:
 1. Extension download the ASM XML policy from version control system (VCS) based on the parameter "policyvcsname" passed in the request
@@ -75,11 +82,11 @@ curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policynam
 - Replace "<parent policy name>" with the ASM policy name that will be exported to the VCS
 
 
-============================
+======================================
 
 EXPORT ASM POLICY:
 
-============================
+======================================
 
 What the extension is doing:
 1. Extension export the ASM XML policy from ASM to local folder
@@ -99,11 +106,11 @@ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgm
 - Replace "<policy name>" with the ASM policy name that will be exported to the VCS
 
 
-============================
+====================================
 
 DELETE ASM POLICY:
 
-============================
+====================================
 
 What the extension is doing:
 1. Extension extract the policy Id from the ASM based on the policy name provided in the request call
