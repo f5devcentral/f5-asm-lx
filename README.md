@@ -22,8 +22,8 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 
 - Install the extension on ASM via ASM CLI command:
 ```sh
-$ curl -u \<user:pass\> -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
-"/var/config/rest/downloads/\<rpm file\>"}'
+$ curl -u <user:pass> -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
+"/var/config/rest/downloads/<rpm file>"}'
 ```
 - Replace \<user:pass\> with the ASM credentials
 - Replace \<rpm file\> with the latest rpm file
@@ -33,8 +33,8 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 3. Set environment variables:
 
 - Open the extension file in local editor and edit the following variables to your environment:
-```sh
 
+```sh
 $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
 
     bigipusername = "replace with bigip username"
@@ -67,7 +67,7 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
 
 
 ### How to Use The Extension:
-1. Create POST call to the extension URL "https://<bigipaddress>/mgmt/shared/workers/opt-policy"
+1. Create POST call to the extension URL "https://\<bigipaddress\>/mgmt/shared/workers/opt-policy"
 2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
 3. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
 4. For Child policy type - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be import or exist before importing child policy)
@@ -76,15 +76,15 @@ See import example below:
 
 1. Security Policy With No Child:
 ```sh
-curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL_to_policy.XML", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 2. Parent Policy:
 ```sh
-curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XMLL>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL_to_policy.XMLL", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 3. Security Policy Child With Parent:
 ```sh
-curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL_to_policy.XML", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
 - Replace \<https://URL_to_policy.XML\> with URL that the ASM policy is located
