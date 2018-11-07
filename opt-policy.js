@@ -11,14 +11,14 @@ var logger = require('f5-logger').getInstance(),
     bigipCredentials = {"user": bigipusername, "pass": bigippassword},
     vcsCredentials = {"username": vcsusername, "password": vcspassword},
     bigipver = "replace with bigip version",
-    DEBUG = true;
+    DEBUG = false;
 
 
 function optPolicy() {}
 
 optPolicy.prototype.WORKER_URI_PATH = "/shared/workers/opt-policy";
 optPolicy.prototype.isPublic = true;
-
+var bigipCredentials = {"user": bigipusername, "pass": bigippassword};
 
 //=============================================================================
 //Starting POST Request Process To Import Policy from VCS
@@ -208,10 +208,7 @@ var transferPolicy = function(Apolicy) {
 
 var importPolicy = function(impolicyId) {
 
-
     if (DEBUG) {logger.info(`Starting importPolicy function. Import Policy into the BIG-IP Created Policy Name: ${impolicyId[0]} `); }
-
-
 
     return new Promise (function(resolve, reject) {
 
@@ -536,8 +533,8 @@ var downloadPolicy = function(exppolicyid) {
 
 var uploadPolicy = function(policyfile) {
 
-    if (DEBUG) { logger.info(`Starting uploadPolicy function. upload Policy Name: ${exportPolicyName}`); }
-
+  if (DEBUG) { logger.info(`Starting uploadPolicy function. upload Policy Name: ${exportPolicyName}`); }
+  var vcsCredentials = {"username": vcsusername, "password": vcspassword};
   var updataPolicy = Buffer.from(policyfile).toString("base64");
   var vcsuploadpath = `api.github.com/repos/${vcsusername}/${vcsrepo}/contents/${vcspath}/`;
   var d = new Date(),
