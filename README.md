@@ -22,11 +22,12 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 
 - Install the extension on ASM via ASM CLI command:
 ```sh
-$ curl -u _\<user:pass\>_ -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
+$ curl -u \<user:pass\> -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
 "/var/config/rest/downloads/\<rpm file\>"}'
 ```
 - Replace \<user:pass\> with the ASM credentials
 - Replace \<rpm file\> with the latest rpm file
+
 For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
 3. Set environment variables:
@@ -73,15 +74,19 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
 
 See import example below:
 
-1. Security Policy With No Child:```sh
+1. Security Policy With No Child:
+```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
-2. Parent Policy:```sh
+2. Parent Policy:
+```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XMLL>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
-3. Security Policy Child With Parent:```sh
+3. Security Policy Child With Parent:
+```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
+
 - Replace \<https://URL_to_policy.XML\> with URL that the ASM policy is located
 - Replace \<bigipaddress\> with ASM mgmt IP and \<auth_hash\> with user basic authorization string
 - Replace \<policy name\> with the ASM policy name that will be exported to the VCS
