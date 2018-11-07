@@ -3,31 +3,25 @@
 # Opt-Policy
 
 ==================================
-
-
 This ASM iControl LX extension repository is intended to improve automation process by using declarative API operations.
 The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE ASM policy from VCS (version control system) in simple API call.
-
-
-
 ==================================
 
 ## How to Deploy the Extension on ASM
 
 ==================================
 
-
 1. Copy latest RPM package:
 
   - Copy extension package from _https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/_ folder to ASM folder:
    _"/var/config/rest/downloads/"_
 
-2. Install RPM package
+2. Install RPM package:
 
 - Install the extension on ASM via ASM CLI command:
 ```sh
 $ curl -u _\<user:pass\>_ -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
-"_/var/config/rest/downloads/\<rpm file\>_"}'
+"/var/config/rest/downloads/\<rpm file\>"}'
 ```
 - Replace \<user:pass\> with the ASM credentials
 - Replace \<rpm file\> with the latest rpm file
@@ -35,8 +29,11 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 3. Set environment variables:
 
-- Open the extension folder "_/var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js_" and edit the following variables to your environment:
+- Open the extension file in local editor and edit the following variables to your environment:
 ```sh
+
+$ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
+
     bigipusername = "replace with bigip username"
     bigippassword = "replace with bigip password"
     vcsusername = "replace with vcs username"
@@ -51,7 +48,6 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 ```sh
   $ tmsh modify sys dns name-servers add { x.x.x.x }
-```
 
 ======================================
 
@@ -74,18 +70,19 @@ How to Use The Extension:
 
 See import example below:
 
-1. Security Policy With No Child:
+1. Security Policy With No Child:```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
-
-2. Parent Policy:
+```
+2. Parent Policy:```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XMLL>", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
-
-3. Security Policy Child With Parent:
+```
+3. Security Policy Child With Parent:```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+```
 
-- Replace "bigipaddress" with ASM mgmt IP and "<auth_hash>" with user basic authorization string
-- Replace "policy name" with the ASM policy name that will be exported to the VCS
-- Replace "<parent policy name>" with the ASM policy name that will be exported to the VCS
+- Replace \<bigipaddress\> with ASM mgmt IP and \<auth_hash\> with user basic authorization string
+- Replace \<policy name\> with the ASM policy name that will be exported to the VCS
+- Replace \<parent policy name\> with the ASM policy name that will be exported to the VCS
 
 
 ======================================
@@ -106,7 +103,9 @@ How to Use The Extension:
 
 see example below:
 
+```sh
 curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgmt/shared/workers/opt-policy?policy=<policy name>
+```
 
 - Replace "bigipaddress" with ASM mgmt IP and <auth_hash> with user basic authorization string
 - Replace <policy name> with the ASM policy name that will be exported to the VCS
