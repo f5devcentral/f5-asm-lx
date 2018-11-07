@@ -49,7 +49,8 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
 4. Add at least one DNS Resolving Server List on ASM:
 
 ```sh
-  $ tmsh modify sys dns name-servers add { x.x.x.x }```
+  $ "tmsh modify sys dns name-servers add { x.x.x.x }"
+```
 
 ======================================
 
@@ -57,14 +58,14 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
 
 ======================================
 
-What the extension is doing:
+### What the extension is doing:
 1. Extension download the ASM XML policy from version control system (VCS) based on the parameter "policyvcsname" passed in the request
 2. Extension transfer the VCS downloaded policy to ASM folder
 3. Extension import the downloaded policy and name it as describe in the "policyname" parameter passed in the request
 4. Extension validate the import policy process and report back the results
 
 
-How to Use The Extension:
+### How to Use The Extension:
 1. Create POST call to the extension URL "https://<bigipaddress>/mgmt/shared/workers/opt-policy"
 2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
 3. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
@@ -81,7 +82,7 @@ curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XMLL>", "policyna
 3. Security Policy Child With Parent:```sh
 curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
-
+- Replace \<https://URL_to_policy.XML\> with URL that the ASM policy is located
 - Replace \<bigipaddress\> with ASM mgmt IP and \<auth_hash\> with user basic authorization string
 - Replace \<policy name\> with the ASM policy name that will be exported to the VCS
 - Replace \<parent policy name\> with the ASM policy name that will be exported to the VCS
@@ -93,13 +94,13 @@ curl --insecure -d '{ "policyvcsname": "<https://URL_to_policy.XML>", "policynam
 
 ======================================
 
-What the extension is doing:
+### What the extension is doing:
 1. Extension export the ASM XML policy from ASM to local folder
 2. Extension validate that the export ASM policy done successfully
 3. Extension download the policy to ASM local folder
 3. Extension upload the exported policy to VCS repository and provide back the result to the caller  
 
-How to Use The Extension:
+### How to Use The Extension:
 1. Create GET call to the extension URL https://<bigipaddress>/mgmt/shared/workers/git-policy"
 2. Include URL parameter name"policy" and value equal the policy name that will be uploaded to the VCS.
 
@@ -119,19 +120,20 @@ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgm
 
 ====================================
 
-What the extension is doing:
+### What the extension is doing:
 1. Extension extract the policy Id from the ASM based on the policy name provided in the request call
 2. Extension validate if the policy Id is exist in ASM
 3. Extension delete the policy from the ASM based on the policy Id and report back the results
 
-How to Use The Extension:
-1. Create DELETE call to the extension URL "https:<bigip_address>"/mgmt/shared/workers//opt-policy"
-2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxxx"
-3. Include body parameter name "policyname" and the policy name as value.
+### How to Use The Extension:
+1. Create DELETE call to the extension URL _https:<bigip_address>"/mgmt/shared/workers//opt-policy_
+2. Include HTTP Headers: _"Content-Type: application/json" and "Authorization: Basic xxxxxxx"_
+3. Include body parameter name _"policyname"_ and the policy name as value.
 
 see example below:
-
+```sh
 curl --insecure -d '{ "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>=" -X DELETE https://<bigipaddress>/mgmt/shared/workers/opt-policy
+```
 
-- Replace "<bigipaddress>" with ASM mgmt IP and "<auth_hash>" with user basic authorization string
-- Replace "<policy name>" with the ASM policy name that will be exported to the VCS
+- Replace \<bigipaddress\> with ASM mgmt IP and "<auth_hash>" with user basic authorization string
+- Replace \<policy name>\ with the ASM policy name that will be exported to the VCS
