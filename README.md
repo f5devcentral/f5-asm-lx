@@ -15,7 +15,7 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 
 1. Copy latest RPM package:
 
-  - Copy extension package from _https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/_ folder to ASM folder:
+  - Copy extension package from _https://github.com/f5devcentral/f5-asm-lx/blob/master/RPM/_ folder to local ASM folder:
    _"/var/config/rest/downloads/"_
 
 2. Install RPM package:
@@ -23,10 +23,10 @@ The LX extension intended to provide policy operation such IMPORT/EXPORT/DELETE 
 - Install the extension on ASM via ASM CLI command:
 ```sh
 $ curl -u <user:pass> -X POST http://localhost:8100/mgmt/shared/iapp/package-management-tasks -d '{ "operation":"INSTALL","packageFilePath":
-"/var/config/rest/downloads/<rpm file>"}'
+"/var/config/rest/downloads/<rpm_file>"}'
 ```
 - Replace \<user:pass\> with the ASM credentials
-- Replace \<rpm file\> with the latest rpm file
+- Replace \<rpm_file\> with the latest rpm file
 
 For More Information, Follow iControl deployment extension guide: https://devcentral.f5.com/Wiki/iControlLX.HowToSamples_deploy_icontrol_extension.ashx
 
@@ -53,13 +53,13 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
 4. Restart the ASM restnoded service to upload the new extension via ASM CLI command:
 
 ```sh
-restcurl shared/nodejs/loader-path-config -d '{"workerPath": "/var/config/rest/iapps/OptPolicy"}'
+$ restcurl shared/nodejs/loader-path-config -d '{"workerPath": "/var/config/rest/iapps/OptPolicy"}'
 ```
 
 5. Add at least one DNS resolving server list on ASM configuration via ASM CLI command:
 
 ```sh
-  $ "tmsh modify sys dns name-servers add { x.x.x.x }"
+$ "tmsh modify sys dns name-servers add { x.x.x.x }"
 ```
 
 ======================================
