@@ -93,7 +93,7 @@ $ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname":
 ```
 3. Security Policy Child With Parent:
 ```sh
-$ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": "<policy_name>", "policyparentname": "<parent_policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+$ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>", "policyparentname": "<parent_policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
 - Replace \<https://URL/policy.xml\> with URL that the ASM policy is located
