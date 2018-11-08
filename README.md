@@ -32,7 +32,7 @@ For More Information, Follow iControl deployment extension guide: https://devcen
 
 3. Set environment variables:
 
-- Open the extension file in local editor and edit the following variables to your environment:
+- Edit the following variables to your environment via ASM CLI command:
 
 ```sh
 $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
@@ -47,13 +47,16 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
     bigipver = "replace with bigip version"
     DEBUG = false
   ```
-4. Restart the restnoded service on the BIG-IP to upload the new extenstion
+- set all variables to the local envrioment
+- for debug purpose, change the DEBUG variable from false to true and check logs at "/var/log/restnoded/restnoded.log"
+
+4. Restart the ASM restnoded service to upload the new extension via ASM CLI command:
 
 ```sh
 restcurl shared/nodejs/loader-path-config -d '{"workerPath": "/var/config/rest/iapps/OptPolicy"}'
 ```
 
-5. Add at least one DNS Resolving Server List on ASM:
+5. Add at least one DNS resolving server list on ASM configuration via ASM CLI command:
 
 ```sh
   $ "tmsh modify sys dns name-servers add { x.x.x.x }"
@@ -76,24 +79,24 @@ restcurl shared/nodejs/loader-path-config -d '{"workerPath": "/var/config/rest/i
 1. Create POST call to the extension URL "https://\<bigipaddress\>/mgmt/shared/workers/opt-policy"
 2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
 3. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
-4. For Child policy type - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be import or exist before importing child policy)
+4. Include parameter "policyparentname" for child policy type only - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be imported or exist before importing child policy)
 
-See import example below:
+See import examples below for different policy types:
 
 1. Security Policy With No Child:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL_to_policy.XML", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 2. Parent Policy:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL_to_policy.XMLL", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 3. Security Policy Child With Parent:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL_to_policy.XML", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
-- Replace \<https://URL_to_policy.XML\> with URL that the ASM policy is located
+- Replace \<https://URL/policy.xml\> with URL that the ASM policy is located
 - Replace \<bigipaddress\> with ASM mgmt IP and \<auth_hash\> with user basic authorization string
 - Replace \<policy name\> with the ASM policy name that will be exported to the VCS
 - Replace \<parent policy name\> with the ASM policy name that will be exported to the VCS
@@ -147,4 +150,4 @@ curl --insecure -d '{ "policyname": "<policy name>" }' -H "Content-Type: applica
 ```
 
 - Replace \<bigipaddress\> with ASM mgmt IP and "<auth_hash>" with user basic authorization string
-- Replace \<policy name>\ with the ASM policy name that will be exported to the VCS
+- Replace \<policy name>\> with the ASM policy name that will be exported to the VCS
