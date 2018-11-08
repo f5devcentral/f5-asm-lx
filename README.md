@@ -79,27 +79,27 @@ $ "tmsh modify sys dns name-servers add { x.x.x.x }"
 1. Create POST call to the extension URL "https://\<bigipaddress\>/mgmt/shared/workers/opt-policy"
 2. Include HTTP Headers: "Content-Type: application/json" and "Authorization: Basic xxxxxx"
 3. Include parameter "policyvcsname" point to the VCS policy URL and parameter "policyname" that indicate what will be the policy name.
-4. Include parameter "policyparentname" for child policy type only - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be imported or exist before importing child policy)
+4. Include parameter "policyparentname" for child policy type only - add additional parameter "policyparentname" that refer to the parent policy name (Parent policy should be imported or exist before importing child policy). No need to add if the policy is not a child type policy
 
 See import examples below for different policy types:
 
 1. Security Policy With No Child:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 2. Parent Policy:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 3. Security Policy Child With Parent:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": "<policy name>", "policyparentname": "<parent policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": "<policy_name>", "policyparentname": "<parent_policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
 - Replace \<https://URL/policy.xml\> with URL that the ASM policy is located
 - Replace \<bigipaddress\> with ASM mgmt IP and \<auth_hash\> with user basic authorization string
-- Replace \<policy name\> with the ASM policy name that will be exported to the VCS
-- Replace \<parent policy name\> with the ASM policy name that will be exported to the VCS
+- Replace \<policy_name\> with the ASM policy name that will be exported to the VCS
+- Replace \<parent_policy_name\> with the ASM policy name that will be exported to the VCS
 
 
 ======================================
@@ -116,16 +116,16 @@ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": 
 
 ### How to Use The Extension:
 1. Create GET call to the extension URL https://<bigipaddress>/mgmt/shared/workers/git-policy"
-2. Include URL parameter name"policy" and value equal the policy name that will be uploaded to the VCS.
+2. Include URL parameter name "policy" value equal the policy name that will be uploaded to the VCS.
 
 see example below:
 
 ```sh
-curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgmt/shared/workers/opt-policy?policy=<policy name>
+curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgmt/shared/workers/opt-policy?policy=<policy_name>
 ```
 
-- Replace "bigipaddress" with ASM mgmt IP and <auth_hash> with user basic authorization string
-- Replace <policy name> with the ASM policy name that will be exported to the VCS
+- Replace \<bigipaddress\> with ASM mgmt IP and <auth_hash> with user basic authorization string
+- Replace \<policy_name\> with the ASM policy name that will be exported to the VCS
 
 
 ====================================
@@ -141,13 +141,14 @@ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgm
 
 ### How to Use The Extension:
 1. Create DELETE call to the extension URL _https:<bigip_address>"/mgmt/shared/workers//opt-policy_
-2. Include HTTP Headers: _"Content-Type: application/json" and "Authorization: Basic xxxxxxx"_
+2. Include HTTP Headers: _"Content-Type: application/json" and "Authorization: Basic <auth_hash>"_
 3. Include body parameter name _"policyname"_ and the policy name as value.
 
 see example below:
+
 ```sh
-curl --insecure -d '{ "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>=" -X DELETE https://<bigipaddress>/mgmt/shared/workers/opt-policy
+curl --insecure -d '{ "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X DELETE https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
-- Replace \<bigipaddress\> with ASM mgmt IP and "<auth_hash>" with user basic authorization string
+- Replace \<bigipaddress\> with ASM mgmt IP and "\<auth_hash\>" with user basic authorization string
 - Replace \<policy name>\> with the ASM policy name that will be exported to the VCS
