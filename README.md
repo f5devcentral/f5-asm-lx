@@ -47,7 +47,13 @@ $ vi /var/config/rest/iapps/OptPolicy/nodejs/opt-policy.js
     bigipver = "replace with bigip version"
     DEBUG = false
   ```
-4. Add at least one DNS Resolving Server List on ASM:
+4. Restart the restnoded service on the BIG-IP to upload the new extenstion
+
+```sh
+restcurl shared/nodejs/loader-path-config -d '{"workerPath": "/var/config/rest/iapps/OptPolicy"}'
+```
+
+5. Add at least one DNS Resolving Server List on ASM:
 
 ```sh
   $ "tmsh modify sys dns name-servers add { x.x.x.x }"

@@ -8,8 +8,6 @@ var logger = require('f5-logger').getInstance(),
     vcsemail = "replace with vcs email",
     vcsrepo = "replace with vcs repo name",
     vcspath = "replace with vcs path name",
-    bigipCredentials = {"user": bigipusername, "pass": bigippassword},
-    vcsCredentials = {"username": vcsusername, "password": vcspassword},
     bigipver = "replace with bigip version",
     DEBUG = false;
 
