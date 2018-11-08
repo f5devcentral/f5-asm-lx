@@ -85,15 +85,15 @@ See import examples below for different policy types:
 
 1. Security Policy With No Child:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+$ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 2. Parent Policy:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+$ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xml", "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 3. Security Policy Child With Parent:
 ```sh
-curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": "<policy_name>", "policyparentname": "<parent_policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
+$ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": "<policy_name>", "policyparentname": "<parent_policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X POST https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
 - Replace \<https://URL/policy.xml\> with URL that the ASM policy is located
@@ -121,7 +121,7 @@ curl --insecure -d '{ "policyvcsname": "https://URL/policy.xmlL", "policyname": 
 see example below:
 
 ```sh
-curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgmt/shared/workers/opt-policy?policy=<policy_name>
+$ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgmt/shared/workers/opt-policy?policy=<policy_name>
 ```
 
 - Replace \<bigipaddress\> with ASM mgmt IP and <auth_hash> with user basic authorization string
@@ -147,8 +147,8 @@ curl --insecure -H "Authorization: Basic <auth_hash>" https://<bigipaddress>/mgm
 see example below:
 
 ```sh
-curl --insecure -d '{ "policyname": "<policy name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X DELETE https://<bigipaddress>/mgmt/shared/workers/opt-policy
+$ curl --insecure -d '{ "policyname": "<policy_name>" }' -H "Content-Type: application/json" -H "Authorization: Basic <auth_hash>" -X DELETE https://<bigipaddress>/mgmt/shared/workers/opt-policy
 ```
 
 - Replace \<bigipaddress\> with ASM mgmt IP and "\<auth_hash\>" with user basic authorization string
-- Replace \<policy name>\> with the ASM policy name that will be exported to the VCS
+- Replace \<policy_name>\> with the ASM policy name that will be exported to the VCS
