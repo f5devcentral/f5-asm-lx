@@ -267,7 +267,7 @@ var importPolicy = function(impolicyId) {
 var validatePolicy = function(validateIDResponse) {
 
     if (DEBUG) {logger.info(`Starting validatePolicy function. Validate Policy Import ID ${validateIDResponse}`); }
-    var vtimeOut = 25000;
+    var vtimeOut = 40000;
     global.valimportID = validateIDResponse.replace(/^"+|"+$/g, '');
     var ValidatePolicyURL = `https://localhost/mgmt/tm/asm/tasks/import-policy/${valimportID}?ver=${bigipver}`;
 
